@@ -6,16 +6,12 @@
 #include "keyboard.h"
 #include "coord_utils.h"
 #include "gamestate.h"
+#include "selection_ui.h"
 
 #define FUNARR_LEN(arr) (sizeof(arr)/sizeof(size_t))
 
 typedef void (*PURE_SYSTEM)(GameState*);
 typedef void (*EVENT_SYSTEM)(GameState*, union ALLEGRO_EVENT);
-
-void draw_selection_area(GameState* gs) {
-    Rect sa = gs->selection_area;
-    al_draw_filled_rectangle(RECT_COORDINATES(sa), al_map_rgba_f(0, 1, 0.4, 0.2));
-}
 
 void init_mouse(GameState* gs) {
     al_install_mouse();
@@ -67,20 +63,6 @@ void should_redraw(GameState* gs, ALLEGRO_EVENT event) {
 void prep_redraw(GameState* gs) {
     gs->redraw = false;
     al_clear_to_color(al_map_rgb(50, 50, 80));
-}
-
-void selection_system(GameState* gs, ALLEGRO_EVENT event) {
-    if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
-        gs->during_selection = true;
-        gs->selection_area.tl = gs->mouse_position;
-    }
-
-    if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
-        gs->during_selection = false;
-        gs->selection_area.br = gs->mouse_position;
-    }
-
-    if(gs->during_selection) gs->selection_area.br = gs->mouse_position;
 }
 
 

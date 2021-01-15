@@ -11,6 +11,6 @@ link_directories(${ALLEGRO_LIBRARY_DIRS})
 
 add_definitions(${ALLEGRO_CFLAGS_OTHER})
 
-add_executable(_rts src/main.c src/keyboard.c src/keyboard.h src/gamestate.h src/coord_utils.h)
+add_executable(_rts src/main.c src/keyboard.c src/keyboard.h src/gamestate.h src/coord_utils.h src/selection_ui.c src/selection_ui.h)
 
 target_link_libraries(_rts ${ALLEGRO_LIBRARIES})
