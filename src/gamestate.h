@@ -17,7 +17,7 @@
 typedef struct {
     bool during_selection;
     Rect selection_area;
-    Point mouse_position;
+    Vec2 mouse_position;
 
     bool should_exit;
 

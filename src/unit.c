@@ -49,7 +49,7 @@ void advance_units(GameState *gs) {
         struct UnitEntry* u_e = (struct UnitEntry*) vec_get(&gs->unit_entries, i);
         if(u_e->exists) {
 
-            Vec2 diff = vec2_sub(vec2_from_point(u_e->unit.destination), vec2_from_point(u_e->unit.position));
+            Vec2 diff = vec2_sub(u_e->unit.destination, u_e->unit.position);
             if(vec2_length(diff) <= UNIT_SPEED) {
                 u_e->unit.position = u_e->unit.destination;
             }
@@ -58,15 +58,9 @@ void advance_units(GameState *gs) {
                 Vec2 delta = vec2_scale(dir, UNIT_SPEED);
 //                printf("len: %f %f\n", vec2_length(dir), vec2_length(delta));
 //                printf("Delta: x=%f  y=%f\n", delta.x, delta.y);
-                u_e->unit.position = point_from_vec2(
-                        vec2_add(vec2_from_point(u_e->unit.position), delta)
-                );
-                u_e->unit.collider.tl = point_from_vec2(
-                        vec2_add(vec2_from_point(u_e->unit.collider.tl), delta)
-                );
-                u_e->unit.collider.br = point_from_vec2(
-                        vec2_add(vec2_from_point(u_e->unit.collider.br), delta)
-                );
+                u_e->unit.position = vec2_add(u_e->unit.position, delta);
+                u_e->unit.collider.tl = vec2_add(u_e->unit.collider.tl, delta);
+                u_e->unit.collider.br = vec2_add(u_e->unit.collider.br, delta);
 //                printf("New pos: x=%f  y=%f\n\n", u_e->unit.position.x, u_e->unit.position.y);
             }
 

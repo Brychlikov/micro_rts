@@ -13,9 +13,9 @@
 extern ALLEGRO_BITMAP* unit_sprite;
 
 struct Unit {
-    Point position;
+    Vec2  position;
     Rect collider;
-    Point destination;
+    Vec2 destination;
 } ;
 
 typedef struct Unit Unit;

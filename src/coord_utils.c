@@ -1,15 +1,6 @@
 #include "coord_utils.h"
 #include "math.h"
 
-
-Vec2 vec2_from_point(Point p) {
-    return *(Vec2*)&p;
-}
-
-Point point_from_vec2(Vec2 v) {
-    return *(Point *) &v;
-}
-
 Vec2 vec2_add(Vec2 a, Vec2 b) {
     Vec2 res = {
             .x=a.x + b.x,

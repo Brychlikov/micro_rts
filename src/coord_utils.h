@@ -13,22 +13,14 @@ typedef enum {
 } Collision;
 
 typedef struct {
-    float x; float y;
-} Point;
-
-typedef struct {
-    Point tl;
-    Point br;
-} Rect;
-
-typedef struct {
     float x;
     float y;
 } Vec2;
 
-Point point_from_vec2(Vec2 v);
-
-Vec2 vec2_from_point(Point p);
+typedef struct {
+    Vec2 tl;
+    Vec2 br;
+} Rect;
 
 Vec2 vec2_add(Vec2 a, Vec2 b);
 
