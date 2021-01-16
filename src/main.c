@@ -7,23 +7,12 @@
 #include "coord_utils.h"
 #include "gamestate.h"
 #include "selection_ui.h"
+#include "mouse.h"
 
 #define FUNARR_LEN(arr) (sizeof(arr)/sizeof(size_t))
 
 typedef void (*PURE_SYSTEM)(GameState*);
 typedef void (*EVENT_SYSTEM)(GameState*, union ALLEGRO_EVENT);
-
-void init_mouse(GameState* gs) {
-    al_install_mouse();
-    al_register_event_source(gs->queue, al_get_mouse_event_source());
-}
-
-void update_mouse (GameState * gs, ALLEGRO_EVENT event) {
-    if(event.type == ALLEGRO_EVENT_MOUSE_AXES) {
-        gs->mouse_position.x = (float)event.mouse.x;
-        gs->mouse_position.y = (float)event.mouse.y;
-    }
-}
 
 
 void misc_allegro_init(GameState* gs) {
