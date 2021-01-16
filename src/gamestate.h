@@ -31,7 +31,8 @@ typedef struct {
 
     unsigned char keys[ALLEGRO_KEY_MAX];
 
-    Vector units;
+    Vector unit_entries;
+    Vector units_selected_indices;
 } GameState;
 
 

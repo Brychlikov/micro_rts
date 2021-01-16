@@ -24,4 +24,9 @@ void vec_push(Vector* vec, void* item);
 
 void* vec_get(Vector* vec, size_t index);
 
+void vec_destroy(Vector* vec);
+
+void vec_clear(Vector* vec);
+
+
 #endif //_RTS_VECTOR_H

@@ -7,6 +7,11 @@
 
 #define RECT_COORDINATES(rect) rect.tl.x, rect.tl.y, rect.br.x, rect.br.y
 
+typedef enum {
+    APART,
+    COLLISION
+} Collision;
+
 typedef struct {
     float x; float y;
 } Point;
@@ -36,4 +41,7 @@ Vec2 vec2_scale(Vec2 v, float scalar);
 float vec2_length(Vec2 v);
 
 Vec2 vec2_norm(Vec2 v);
+
+Collision rect_collide(Rect r1, Rect r2);
+
 #endif //_RTS_COORD_UTILS_H

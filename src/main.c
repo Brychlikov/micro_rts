@@ -71,7 +71,7 @@ EVENT_SYSTEM event_fns[] = {
         should_exit,
         should_redraw,
         selection_system,
-
+        command_units
 };
 
 PURE_SYSTEM redraw_fns[] = {

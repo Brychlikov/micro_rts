@@ -46,3 +46,12 @@ Vec2 vec2_norm(Vec2 v) {
     return vec2_scale(v, 1/vec2_length(v));
 }
 
+Collision rect_collide(Rect r1, Rect r2) {
+    // (0, 0) is the top left corner !!
+    if(r1.tl.x > r2.br.x) return APART;
+    if(r1.tl.y > r2.br.y) return APART;
+    if(r1.br.y < r2.tl.y) return APART;
+    if(r1.br.x < r2.tl.x) return APART;
+    return COLLISION;
+}
+

@@ -9,26 +9,33 @@ struct ALLEGRO_BITMAP* unit_sprite;
 
 void init_units(GameState* gs) {
     printf("Size of UnitEntry: %ld\n", sizeof (struct UnitEntry));
-    gs->units = vec_new(sizeof(struct UnitEntry));
+    gs->unit_entries = vec_new(sizeof(struct UnitEntry));
+    gs->units_selected_indices = vec_new(sizeof(size_t));
     unit_sprite = al_load_bitmap("assets/unit.png");
     if (unit_sprite == NULL) {
         fprintf(stderr, "Could not load unit sprite");
     }
     Unit new_unit = {
             .position= {.x=200, .y=400},
-            .collider= {},
+            .collider= {
+                .tl= {
+                    .x=200, .y=400,
+                },
+                .br={
+                    .x=280, .y=480
+            }},
             .destination={.x=900, .y=100}
     };
     struct UnitEntry new_entry = {
             .exists=true,
             .unit=new_unit
     };
-    vec_push(&gs->units, &new_entry);
+    vec_push(&gs->unit_entries, &new_entry);
 }
 
 void draw_units(GameState *gs) {
-    for (int i = 0; i < gs->units.length; ++i) {
-        struct UnitEntry u_e = *(struct UnitEntry*) vec_get(&gs->units, i);
+    for (int i = 0; i < gs->unit_entries.length; ++i) {
+        struct UnitEntry u_e = *(struct UnitEntry*) vec_get(&gs->unit_entries, i);
         if(u_e.exists) {
             al_draw_bitmap(unit_sprite, u_e.unit.position.x, u_e.unit.position.y, 0);
         }
@@ -37,9 +44,9 @@ void draw_units(GameState *gs) {
 
 
 void advance_units(GameState *gs) {
-    for (int i = 0; i < gs->units.length; ++i) {
+    for (int i = 0; i < gs->unit_entries.length; ++i) {
 
-        struct UnitEntry* u_e = (struct UnitEntry*) vec_get(&gs->units, i);
+        struct UnitEntry* u_e = (struct UnitEntry*) vec_get(&gs->unit_entries, i);
         if(u_e->exists) {
 
             Vec2 diff = vec2_sub(vec2_from_point(u_e->unit.destination), vec2_from_point(u_e->unit.position));
@@ -49,15 +56,35 @@ void advance_units(GameState *gs) {
             else {
                 Vec2 dir = vec2_norm(diff);
                 Vec2 delta = vec2_scale(dir, UNIT_SPEED);
-                printf("len: %f %f\n", vec2_length(dir), vec2_length(delta));
-                printf("Delta: x=%f  y=%f\n", delta.x, delta.y);
+//                printf("len: %f %f\n", vec2_length(dir), vec2_length(delta));
+//                printf("Delta: x=%f  y=%f\n", delta.x, delta.y);
                 u_e->unit.position = point_from_vec2(
                         vec2_add(vec2_from_point(u_e->unit.position), delta)
                 );
-                printf("New pos: x=%f  y=%f\n\n", u_e->unit.position.x, u_e->unit.position.y);
+                u_e->unit.collider.tl = point_from_vec2(
+                        vec2_add(vec2_from_point(u_e->unit.collider.tl), delta)
+                );
+                u_e->unit.collider.br = point_from_vec2(
+                        vec2_add(vec2_from_point(u_e->unit.collider.br), delta)
+                );
+//                printf("New pos: x=%f  y=%f\n\n", u_e->unit.position.x, u_e->unit.position.y);
             }
 
         }
 
+    }
+}
+
+void command_units(GameState *gs, ALLEGRO_EVENT event) {
+    if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && event.mouse.button == 2) {
+        printf("giving commands\n");
+        for (int i = 0; i < gs->units_selected_indices.length; ++i) {
+            printf("command issued to unit %d\n", i);
+            size_t index = *(size_t*)vec_get(&gs->units_selected_indices, i);
+            UnitEntry* unit_entry = vec_get(&gs->unit_entries, index);
+            if(unit_entry->exists) {
+                unit_entry->unit.destination = gs->mouse_position;
+            }
+        }
     }
 }

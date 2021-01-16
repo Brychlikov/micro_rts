@@ -31,10 +31,17 @@ void vec_push(Vector* vec, void* item) {
 }
 
 void* vec_get(Vector* vec, size_t index) {
+    assert(index < vec->length);
     return vec->buf + vec->type_size * index;
 }
 
-void vec_destroy(Vector* vec) {
+void vec_clear(Vector *vec) {
+    // clear vec without releasing its buffer
+    vec->length = 0;
+}
+
+void vec_destroy(Vector *vec) {
     // deallocating vec itself is up to the caller
     free(vec->buf);
 }
+

@@ -31,9 +31,13 @@ struct UnitEntry {
     };
 };
 
+typedef struct UnitEntry UnitEntry;
+
 void init_units(GameState* gs);
 
 void draw_units(GameState* gs);
+
+void command_units(GameState* gs, ALLEGRO_EVENT event);
 
 void advance_units(GameState* gs);
 
