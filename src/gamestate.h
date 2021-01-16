@@ -7,7 +7,12 @@
 
 #include "coord_utils.h"
 #include <allegro5/allegro5.h>
+//#include "unit.h"
+#include "vector.h"
 #include <allegro5/allegro_font.h>
+
+//struct Unit;
+//struct UnitEntry;
 
 typedef struct {
     bool during_selection;
@@ -25,6 +30,8 @@ typedef struct {
     bool redraw;
 
     unsigned char keys[ALLEGRO_KEY_MAX];
+
+    Vector units;
 } GameState;
 
 

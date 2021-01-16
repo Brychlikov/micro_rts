@@ -1,11 +1,13 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_image.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include "keyboard.h"
 #include "coord_utils.h"
 #include "gamestate.h"
+#include "unit.h"
 #include "selection_ui.h"
 #include "mouse.h"
 
@@ -18,6 +20,7 @@ typedef void (*EVENT_SYSTEM)(GameState*, union ALLEGRO_EVENT);
 void misc_allegro_init(GameState* gs) {
     al_init();
     al_init_primitives_addon();
+    al_init_image_addon();
 
     gs->timer = al_create_timer(1.0 / 60.0);
     gs->queue = al_create_event_queue();
@@ -59,6 +62,7 @@ PURE_SYSTEM init_fns[] = {
         misc_allegro_init,
         init_keyboard,
         init_mouse,
+        init_units,
 };
 
 EVENT_SYSTEM event_fns[] = {
@@ -73,6 +77,8 @@ EVENT_SYSTEM event_fns[] = {
 PURE_SYSTEM redraw_fns[] = {
         prep_redraw,
         draw_selection_area,
+        advance_units,
+        draw_units,
 
         reset_keys, // this should be last
 };

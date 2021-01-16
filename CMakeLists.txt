@@ -5,12 +5,12 @@ set(CMAKE_C_STANDARD 11)
 
 find_package(PkgConfig REQUIRED)
 
-pkg_check_modules(ALLEGRO REQUIRED allegro-5 allegro_font-5 allegro_primitives-5)
+pkg_check_modules(ALLEGRO REQUIRED allegro-5 allegro_font-5 allegro_primitives-5 allegro_image-5)
 include_directories(${ALLEGRO_INCLUDE_DIRS})
 link_directories(${ALLEGRO_LIBRARY_DIRS})
 
 add_definitions(${ALLEGRO_CFLAGS_OTHER})
 
-add_executable(_rts src/main.c src/keyboard.c src/keyboard.h src/gamestate.h src/coord_utils.h src/selection_ui.c src/selection_ui.h src/mouse.c src/mouse.h)
+add_executable(_rts src/main.c src/keyboard.c src/keyboard.h src/gamestate.h src/coord_utils.h src/selection_ui.c src/selection_ui.h src/mouse.c src/mouse.h src/unit.c src/unit.h src/vector.c src/vector.h src/coord_utils.c)
 
-target_link_libraries(_rts ${ALLEGRO_LIBRARIES})
+target_link_libraries(_rts ${ALLEGRO_LIBRARIES} m)
