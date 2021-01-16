@@ -19,7 +19,7 @@ void misc_allegro_init(GameState* gs) {
     al_init();
     al_init_primitives_addon();
 
-    gs->timer = al_create_timer(1.0 / 30.0);
+    gs->timer = al_create_timer(1.0 / 60.0);
     gs->queue = al_create_event_queue();
     gs->display = al_create_display(1280, 720);
     gs->font = al_create_builtin_font();
