@@ -16,9 +16,9 @@ typedef struct {
 
 #define VEC_DEFAULT_CAPACITY 4
 
-Vector vec_new(size_t type_size);
+Vector* vec_new(size_t type_size);
 
-Vector vec_with_capacity(size_t type_size, size_t capacity);
+Vector* vec_with_capacity(size_t type_size, size_t capacity);
 
 void vec_push(Vector* vec, void* item);
 

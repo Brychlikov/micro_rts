@@ -32,16 +32,16 @@ void selection_system(GameState* gs, ALLEGRO_EVENT event) {
         gs->during_selection = false;
         gs->selection_area.br = gs->mouse_position;
 
-        vec_clear(&gs->units_selected_indices);
+        vec_clear(gs->units_selected_indices);
 
         printf("querying for collisions\n");
-        for (size_t i = 0; i < gs->unit_entries.length; ++i) {
-            UnitEntry* unit_entry = vec_get(&gs->unit_entries, i);
+        for (size_t i = 0; i < gs->unit_entries->length; ++i) {
+            UnitEntry* unit_entry = vec_get(gs->unit_entries, i);
             if(unit_entry->exists) {
                 Collision collision_result = rect_collide(unit_entry->unit.collider, gs->selection_area);
                 switch (collision_result) {
                     case COLLISION:
-                        vec_push(&gs->units_selected_indices, &i);
+                        vec_push(gs->units_selected_indices, &i);
                         break;
                     default:
                         break;
@@ -49,8 +49,8 @@ void selection_system(GameState* gs, ALLEGRO_EVENT event) {
             }
 
         }
-        for(int i=0; i < gs->units_selected_indices.length; ++i) {
-            size_t index = *(size_t*)vec_get(&gs->units_selected_indices, i);
+        for(int i=0; i < gs->units_selected_indices->length; ++i) {
+            size_t index = *(size_t*)vec_get(gs->units_selected_indices, i);
             printf("Unit selected: %ld\n", index);
         }
     }

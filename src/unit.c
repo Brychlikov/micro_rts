@@ -30,12 +30,12 @@ void init_units(GameState* gs) {
             .exists=true,
             .unit=new_unit
     };
-    vec_push(&gs->unit_entries, &new_entry);
+    vec_push(gs->unit_entries, &new_entry);
 }
 
 void draw_units(GameState *gs) {
-    for (int i = 0; i < gs->unit_entries.length; ++i) {
-        struct UnitEntry u_e = *(struct UnitEntry*) vec_get(&gs->unit_entries, i);
+    for (int i = 0; i < gs->unit_entries->length; ++i) {
+        struct UnitEntry u_e = *(struct UnitEntry*) vec_get(gs->unit_entries, i);
         if(u_e.exists) {
             al_draw_bitmap(unit_sprite, u_e.unit.position.x, u_e.unit.position.y, 0);
         }
@@ -44,9 +44,9 @@ void draw_units(GameState *gs) {
 
 
 void advance_units(GameState *gs) {
-    for (int i = 0; i < gs->unit_entries.length; ++i) {
+    for (int i = 0; i < gs->unit_entries->length; ++i) {
 
-        struct UnitEntry* u_e = (struct UnitEntry*) vec_get(&gs->unit_entries, i);
+        struct UnitEntry* u_e = (struct UnitEntry*) vec_get(gs->unit_entries, i);
         if(u_e->exists) {
 
             Vec2 diff = vec2_sub(u_e->unit.destination, u_e->unit.position);
@@ -72,10 +72,10 @@ void advance_units(GameState *gs) {
 void command_units(GameState *gs, ALLEGRO_EVENT event) {
     if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && event.mouse.button == 2) {
         printf("giving commands\n");
-        for (int i = 0; i < gs->units_selected_indices.length; ++i) {
+        for (int i = 0; i < gs->units_selected_indices->length; ++i) {
             printf("command issued to unit %d\n", i);
-            size_t index = *(size_t*)vec_get(&gs->units_selected_indices, i);
-            UnitEntry* unit_entry = vec_get(&gs->unit_entries, index);
+            size_t index = *(size_t*)vec_get(gs->units_selected_indices, i);
+            UnitEntry* unit_entry = vec_get(gs->unit_entries, index);
             if(unit_entry->exists) {
                 unit_entry->unit.destination = gs->mouse_position;
             }

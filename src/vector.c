@@ -6,19 +6,22 @@
 #include <assert.h>
 #include <string.h>
 
-Vector vec_new(size_t type_size) {
+Vector* vec_new(size_t type_size) {
     return vec_with_capacity(type_size, VEC_DEFAULT_CAPACITY);
 }
 
-Vector vec_with_capacity(size_t type_size, size_t capacity) {
+Vector* vec_with_capacity(size_t type_size, size_t capacity) {
     Vector res = {
             .buf=malloc(type_size * capacity),
             .type_size=type_size,
             .length=0,
             .capacity=capacity
     };
+    Vector* ptr = malloc(sizeof(Vector));
+    assert(ptr != NULL);
     assert(res.buf != NULL);
-    return res;
+    *ptr = res;
+    return ptr;
 }
 
 void vec_push(Vector* vec, void* item) {
@@ -41,7 +44,7 @@ void vec_clear(Vector *vec) {
 }
 
 void vec_destroy(Vector *vec) {
-    // deallocating vec itself is up to the caller
     free(vec->buf);
+    free(vec);
 }
 
