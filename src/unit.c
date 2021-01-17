@@ -40,6 +40,15 @@ void draw_units(GameState *gs) {
             al_draw_bitmap(unit_sprite, u_e.unit.position.x, u_e.unit.position.y, 0);
         }
     }
+
+    //draw over selected units with tinted bitmap
+    for (int i = 0; i < gs->units_selected_indices->length; ++i) {
+        size_t index = *(size_t*) vec_get(gs->units_selected_indices, i);
+        struct UnitEntry u_e = *(struct UnitEntry*) vec_get(gs->unit_entries, index);
+        if(u_e.exists) {
+            al_draw_tinted_bitmap(unit_sprite, al_map_rgb(0, 100, 0), u_e.unit.position.x, u_e.unit.position.y, 0);
+        }
+    }
 }
 
 
