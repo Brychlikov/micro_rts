@@ -3,14 +3,17 @@
 //
 
 #include "unit.h"
+#include "gamestate.h"
 #define UNIT_SPEED 5
+
+GENERATE_VECTOR_DEFINITION(UnitEntry)
 
 struct ALLEGRO_BITMAP* unit_sprite;
 
 void init_units(GameState* gs) {
     printf("Size of UnitEntry: %ld\n", sizeof (struct UnitEntry));
-    gs->unit_entries = vec_new(sizeof(struct UnitEntry));
-    gs->units_selected_indices = vec_new(sizeof(size_t));
+    gs->unit_entries = vec_UnitEntry_new();
+    gs->units_selected_indices = vec_int_new();
     unit_sprite = al_load_bitmap("assets/unit.png");
     if (unit_sprite == NULL) {
         fprintf(stderr, "Could not load unit sprite");
@@ -30,21 +33,21 @@ void init_units(GameState* gs) {
             .exists=true,
             .unit=new_unit
     };
-    vec_push(gs->unit_entries, &new_entry);
+    vec_UnitEntry_push(gs->unit_entries, new_entry);
 }
 
 void draw_units(GameState *gs) {
-    for (int i = 0; i < gs->unit_entries->length; ++i) {
-        struct UnitEntry u_e = *(struct UnitEntry*) vec_get(gs->unit_entries, i);
+    for (int i = 0; i < gs->unit_entries.inner->length; ++i) {
+        struct UnitEntry u_e = vec_UnitEntry_get(gs->unit_entries, i);
         if(u_e.exists) {
             al_draw_bitmap(unit_sprite, u_e.unit.position.x, u_e.unit.position.y, 0);
         }
     }
 
     //draw over selected units with tinted bitmap
-    for (int i = 0; i < gs->units_selected_indices->length; ++i) {
-        size_t index = *(size_t*) vec_get(gs->units_selected_indices, i);
-        struct UnitEntry u_e = *(struct UnitEntry*) vec_get(gs->unit_entries, index);
+    for (int i = 0; i < gs->units_selected_indices.inner->length; ++i) {
+        int index = vec_int_get(gs->units_selected_indices, i);
+        struct UnitEntry u_e = vec_UnitEntry_get(gs->unit_entries, index);
         if(u_e.exists) {
             al_draw_tinted_bitmap(unit_sprite, al_map_rgb(0, 100, 0), u_e.unit.position.x, u_e.unit.position.y, 0);
         }
@@ -53,9 +56,9 @@ void draw_units(GameState *gs) {
 
 
 void advance_units(GameState *gs) {
-    for (int i = 0; i < gs->unit_entries->length; ++i) {
+    for (int i = 0; i < gs->unit_entries.inner->length; ++i) {
 
-        struct UnitEntry* u_e = (struct UnitEntry*) vec_get(gs->unit_entries, i);
+        struct UnitEntry* u_e = vec_UnitEntry_get_ptr(gs->unit_entries, i);
         if(u_e->exists) {
 
             Vec2 diff = vec2_sub(u_e->unit.destination, u_e->unit.position);
@@ -81,10 +84,10 @@ void advance_units(GameState *gs) {
 void command_units(GameState *gs, ALLEGRO_EVENT event) {
     if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && event.mouse.button == 2) {
         printf("giving commands\n");
-        for (int i = 0; i < gs->units_selected_indices->length; ++i) {
+        for (int i = 0; i < VEC_LEN(gs->units_selected_indices); ++i) {
             printf("command issued to unit %d\n", i);
-            size_t index = *(size_t*)vec_get(gs->units_selected_indices, i);
-            UnitEntry* unit_entry = vec_get(gs->unit_entries, index);
+            int index = vec_int_get(gs->units_selected_indices, i);
+            UnitEntry* unit_entry = vec_UnitEntry_get_ptr(gs->unit_entries, index);
             if(unit_entry->exists) {
                 unit_entry->unit.destination = gs->mouse_position;
             }

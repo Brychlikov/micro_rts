@@ -7,8 +7,9 @@
 #define _RTS_UNIT_H
 
 #include "coord_utils.h"
-#include "gamestate.h"
+//#include "gamestate.h"
 #include <allegro5/allegro5.h>
+#include "vector.h"
 
 extern ALLEGRO_BITMAP* unit_sprite;
 
@@ -19,6 +20,8 @@ struct Unit {
 } ;
 
 typedef struct Unit Unit;
+
+typedef struct GameState GameState;
 
 struct UnitEntry {
     bool exists;
@@ -32,6 +35,8 @@ struct UnitEntry {
 };
 
 typedef struct UnitEntry UnitEntry;
+
+GENERATE_VECTOR_DECLARATION(UnitEntry)
 
 void init_units(GameState* gs);
 

@@ -7,14 +7,12 @@
 
 #include "coord_utils.h"
 #include <allegro5/allegro5.h>
-//#include "unit.h"
+#include "unit.h"
 #include "vector.h"
 #include <allegro5/allegro_font.h>
 
-//struct Unit;
-//struct UnitEntry;
 
-typedef struct {
+typedef struct GameState{
     bool during_selection;
     Rect selection_area;
     Vec2 mouse_position;
@@ -31,9 +29,8 @@ typedef struct {
 
     unsigned char keys[ALLEGRO_KEY_MAX];
 
-    Vector* unit_entries;
-    Vector* units_selected_indices;
+    Vector_UnitEntry unit_entries;
+    Vector_int units_selected_indices;
 } GameState;
-
 
 #endif //_RTS_GAMESTATE_H

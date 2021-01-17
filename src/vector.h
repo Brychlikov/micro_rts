@@ -16,6 +16,40 @@ typedef struct {
 
 #define VEC_DEFAULT_CAPACITY 4
 
+#define GENERATE_VECTOR_DEFINITION(type)           \
+Vector_##type vec_##type##_new() {                           \
+    Vector_##type res = {.inner=vec_new(sizeof(type))}; \
+    return res;\
+}                                                   \
+void vec_##type##_push(Vector_##type vec, type item) {               \
+    vec_push(vec.inner, &item);                                                \
+}                                                   \
+type vec_##type##_get(Vector_##type vec, size_t index) {             \
+    type el = *(type *) vec_get(vec.inner, index);  \
+    return el;\
+}                                                   \
+void vec_##type##_clear(Vector_##type vec) {        \
+    vec_clear(vec.inner);                                                    \
+}                                                  \
+type * vec_##type##_get_ptr(Vector_##type vec, size_t index) {       \
+    return (type * ) vec_get(vec.inner, index);                                               \
+}
+
+#define GENERATE_VECTOR_DECLARATION(type) typedef struct { \
+    Vector* inner;                                                   \
+} Vector_##type ;                                   \
+                                                    \
+Vector_##type vec_##type##_new() ;                           \
+void vec_##type##_push(Vector_##type vec, type item) ;               \
+type vec_##type##_get(Vector_##type vec, size_t index) ;             \
+void vec_##type##_clear(Vector_##type vec) ;               \
+type * vec_##type##_get_ptr(Vector_##type vec, size_t index);
+
+#define VEC_LEN(vec) vec.inner->length
+
+// generate useful vector types
+GENERATE_VECTOR_DECLARATION(int)
+
 Vector* vec_new(size_t type_size);
 
 Vector* vec_with_capacity(size_t type_size, size_t capacity);

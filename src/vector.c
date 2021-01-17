@@ -6,6 +6,9 @@
 #include <assert.h>
 #include <string.h>
 
+// generate useful vector types
+GENERATE_VECTOR_DEFINITION(int)
+
 Vector* vec_new(size_t type_size) {
     return vec_with_capacity(type_size, VEC_DEFAULT_CAPACITY);
 }
