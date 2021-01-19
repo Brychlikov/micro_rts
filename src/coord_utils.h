@@ -5,6 +5,8 @@
 #ifndef _RTS_COORD_UTILS_H
 #define _RTS_COORD_UTILS_H
 
+#include "vector.h"
+
 #define RECT_COORDINATES(rect) rect.tl.x, rect.tl.y, rect.br.x, rect.br.y
 
 typedef enum {
@@ -21,6 +23,16 @@ typedef struct {
     Vec2 tl;
     Vec2 br;
 } Rect;
+
+typedef struct {
+    bool exists;
+    Vec2 position;
+    float rotation;
+    float scale;
+    int entity;
+} Transform;
+
+GENERATE_VECTOR_DECLARATION(Transform)
 
 Vec2 vec2_add(Vec2 a, Vec2 b);
 

@@ -6,6 +6,7 @@
 #define _RTS_VECTOR_H
 
 #include <stdio.h>
+#include <stdbool.h>
 
 typedef struct {
     void** buf;
@@ -33,6 +34,9 @@ void vec_##type##_clear(Vector_##type vec) {        \
 }                                                  \
 type * vec_##type##_get_ptr(Vector_##type vec, size_t index) {       \
     return (type * ) vec_get(vec.inner, index);                                               \
+}                                                  \
+void vec_##type##_push_zero(Vector_##type vec) {   \
+    vec_push_zero(vec.inner);                                                 \
 }
 
 #define GENERATE_VECTOR_DECLARATION(type) typedef struct { \
@@ -43,18 +47,22 @@ Vector_##type vec_##type##_new() ;                           \
 void vec_##type##_push(Vector_##type vec, type item) ;               \
 type vec_##type##_get(Vector_##type vec, size_t index) ;             \
 void vec_##type##_clear(Vector_##type vec) ;               \
-type * vec_##type##_get_ptr(Vector_##type vec, size_t index);
+type * vec_##type##_get_ptr(Vector_##type vec, size_t index);        \
+void vec_##type##_push_zero(Vector_##type vec);
 
 #define VEC_LEN(vec) vec.inner->length
 
 // generate useful vector types
 GENERATE_VECTOR_DECLARATION(int)
+GENERATE_VECTOR_DECLARATION(bool)
 
 Vector* vec_new(size_t type_size);
 
 Vector* vec_with_capacity(size_t type_size, size_t capacity);
 
 void vec_push(Vector* vec, void* item);
+
+void vec_push_zero(Vector* vec);
 
 void* vec_get(Vector* vec, size_t index);
 

@@ -7,8 +7,10 @@
 #define UNIT_SPEED 5
 
 GENERATE_VECTOR_DEFINITION(UnitEntry)
+GENERATE_VECTOR_DEFINITION(Sprite)
 
 struct ALLEGRO_BITMAP* unit_sprite;
+
 
 void init_units(GameState* gs) {
     printf("Size of UnitEntry: %ld\n", sizeof (struct UnitEntry));
@@ -34,6 +36,24 @@ void init_units(GameState* gs) {
             .unit=new_unit
     };
     vec_UnitEntry_push(gs->unit_entries, new_entry);
+
+
+    // ECS land below
+    int new = create_entity(gs);
+    Transform t = {
+            .exists=true,
+            .position={.x=100, .y=100},
+            .rotation=1,
+            .entity=new
+    };
+    *vec_Transform_get_ptr(gs->transform_components, new) = t;
+    Sprite s = {
+            .exists=true,
+            .offset={.x=40, .y=40},
+            .bitmap=unit_sprite,
+            .entity=new,
+    };
+    *vec_Sprite_get_ptr(gs->sprite_components, new) = s;
 }
 
 void draw_units(GameState *gs) {
@@ -89,8 +109,19 @@ void command_units(GameState *gs, ALLEGRO_EVENT event) {
             int index = vec_int_get(gs->units_selected_indices, i);
             UnitEntry* unit_entry = vec_UnitEntry_get_ptr(gs->unit_entries, index);
             if(unit_entry->exists) {
-                unit_entry->unit.destination = gs->mouse_position;
+                unit_entry->unit.destination = gs->resources.mouse_position;
             }
+        }
+    }
+}
+
+void draw_sprites(GameState* gs) {
+    for (int i = 0; i < VEC_LEN(gs->sprite_components); ++i) {
+        // for now assert that every entity with sprite has a valid transform
+        Sprite s = vec_Sprite_get(gs->sprite_components, i);
+        if(vec_bool_get(gs->entities, i)) {  // if entity still alive
+            Transform t = vec_Transform_get(gs->transform_components, i);
+            al_draw_rotated_bitmap(s.bitmap, s.offset.x, s.offset.y, t.position.x, t.position.y, t.rotation, 0);    // disregard scale for now
         }
     }
 }

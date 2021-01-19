@@ -3,11 +3,13 @@
 //
 #include "vector.h"
 #include <stdlib.h>
+#include <stdbool.h>
 #include <assert.h>
 #include <string.h>
 
 // generate useful vector types
 GENERATE_VECTOR_DEFINITION(int)
+GENERATE_VECTOR_DEFINITION(bool)
 
 Vector* vec_new(size_t type_size) {
     return vec_with_capacity(type_size, VEC_DEFAULT_CAPACITY);
@@ -33,6 +35,15 @@ void vec_push(Vector* vec, void* item) {
         assert(vec->buf != NULL);
     }
     memcpy(vec->buf + vec->type_size * vec->length, item, vec->type_size);
+    vec->length++;
+}
+
+void vec_push_zero(Vector* vec) {
+    if(vec->length + 1 > vec->capacity) {
+        vec->buf = realloc(vec->buf, vec->type_size * vec->capacity * 2);
+        assert(vec->buf != NULL);
+    }
+    memset(vec->buf + vec->type_size * vec->length, 0, vec->type_size);
     vec->length++;
 }
 

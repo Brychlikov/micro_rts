@@ -12,25 +12,26 @@
 #include <allegro5/allegro5.h>
 #include "selection_ui.h"
 #include "unit.h"
+#include "mouse.h"
 
-#define LEFT_MOUSE_BUTTON 1
-#define RIGHT_MOUSE_BUTTON 2
 
 void draw_selection_area(GameState* gs) {
-    Rect sa = gs->selection_area;
-    if(gs->during_selection)
+    Rect sa = gs->resources.selection.area;
+    if(gs->resources.selection.in_progress)
         al_draw_filled_rectangle(RECT_COORDINATES(sa), al_map_rgba_f(0, 1, 0.4, 0.2));
 }
 
-void selection_system(GameState* gs, ALLEGRO_EVENT event) {
-    if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && event.mouse.button == LEFT_MOUSE_BUTTON) {
-        gs->during_selection = true;
-        gs->selection_area.tl = gs->mouse_position;
+void selection_system(GameState* gs) {
+    if(gs->resources.mouse_buttons[LEFT_MOUSE_BUTTON] & MOUSE_KEY_UNPROCESSED) {
+        gs->resources.selection.in_progress = true;
+        printf("beginning selection\n");
+        gs->resources.selection.area.tl = gs->resources.mouse_position;
     }
 
-    if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && event.mouse.button == LEFT_MOUSE_BUTTON) {
-        gs->during_selection = false;
-        gs->selection_area.br = gs->mouse_position;
+    // if selection in progress, and LMB no longer being held
+    if(gs->resources.selection.in_progress && !(gs->resources.mouse_buttons[LEFT_MOUSE_BUTTON] & MOUSE_KEY_HELD)) {
+        gs->resources.selection.in_progress = false;
+        gs->resources.selection.area.br = gs->resources.mouse_position;
 
         vec_int_clear(gs->units_selected_indices);
 
@@ -38,7 +39,7 @@ void selection_system(GameState* gs, ALLEGRO_EVENT event) {
         for (size_t i = 0; i < VEC_LEN(gs->unit_entries); ++i) {
             UnitEntry* unit_entry = vec_UnitEntry_get_ptr(gs->unit_entries, i);
             if(unit_entry->exists) {
-                Collision collision_result = rect_collide(unit_entry->unit.collider, gs->selection_area);
+                Collision collision_result = rect_collide(unit_entry->unit.collider, gs->resources.selection.area);
                 switch (collision_result) {
                     case COLLISION:
                         vec_int_push(gs->units_selected_indices, i);
@@ -55,5 +56,5 @@ void selection_system(GameState* gs, ALLEGRO_EVENT event) {
         }
     }
 
-    if(gs->during_selection) gs->selection_area.br = gs->mouse_position;
+    if(gs->resources.selection.in_progress) gs->resources.selection.area.br = gs->resources.mouse_position;
 }

@@ -60,6 +60,9 @@ void prep_redraw(GameState* gs) {
 
 PURE_SYSTEM init_fns[] = {
         misc_allegro_init,
+
+        init_components,
+
         init_keyboard,
         init_mouse,
         init_units,
@@ -70,17 +73,19 @@ EVENT_SYSTEM event_fns[] = {
         update_keys,
         should_exit,
         should_redraw,
-        selection_system,
         command_units
 };
 
 PURE_SYSTEM redraw_fns[] = {
         prep_redraw,
+        selection_system,
         draw_selection_area,
         advance_units,
         draw_units,
+        draw_sprites,
 
-        reset_keys, // this should be last
+        reset_keys, // these should always be last
+        reset_mouse_buttons,
 };
 
 PURE_SYSTEM deinit_fns[] = {
@@ -92,7 +97,9 @@ PURE_SYSTEM deinit_fns[] = {
 int main()
 {
 
-    GameState gs = {.during_selection=false, .selection_area={.tl={.x=0, .y=0}, .br={.x=100, .y=100}}};
+    GameState gs;
+    gs.resources.selection.in_progress = false;
+//    GameState gs = {.during_selection=false, .selection_area={.tl={.x=0, .y=0}, .br={.x=100, .y=100}}};
 
     for (int i = 0; i < FUNARR_LEN(init_fns); ++i) {
         init_fns[i](&gs);

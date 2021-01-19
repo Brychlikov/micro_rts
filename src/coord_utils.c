@@ -1,5 +1,8 @@
 #include "coord_utils.h"
 #include "math.h"
+#include "vector.h"
+
+GENERATE_VECTOR_DEFINITION(Transform)
 
 Vec2 vec2_add(Vec2 a, Vec2 b) {
     Vec2 res = {

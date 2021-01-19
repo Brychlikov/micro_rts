@@ -8,8 +8,8 @@
 #include <allegro5/allegro5.h>
 #include "gamestate.h"
 
-#define KEY_SEEN 1
-#define KEY_RELEASED 2
+#define KEY_UNPROCESSED 1
+#define KEY_HELD 2
 
 
 void init_keyboard(GameState*);

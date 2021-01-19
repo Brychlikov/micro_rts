@@ -13,15 +13,27 @@
 
 extern ALLEGRO_BITMAP* unit_sprite;
 
+typedef struct {
+    bool exists;  // we want all components to have this as first field
+    ALLEGRO_BITMAP* bitmap;
+    Vec2 offset; // coordinates of center point in local space
+    int entity;
+} Sprite;
+
+GENERATE_VECTOR_DECLARATION(Sprite)
+
 struct Unit {
     Vec2  position;
     Rect collider;
     Vec2 destination;
 } ;
 
+typedef struct GameState GameState;
+
+void draw_sprites(GameState* gs) ;
+
 typedef struct Unit Unit;
 
-typedef struct GameState GameState;
 
 struct UnitEntry {
     bool exists;
