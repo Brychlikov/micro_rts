@@ -10,25 +10,9 @@
 //#include "gamestate.h"
 #include <allegro5/allegro5.h>
 #include "vector.h"
+#include "gamestate_forward.h"
 
 extern ALLEGRO_BITMAP* unit_sprite;
-
-typedef struct {
-    bool exists;  // we want all components to have this as first field
-    ALLEGRO_BITMAP* bitmap;
-    Vec2 offset; // coordinates of center point in local space
-    float rotation;
-    ALLEGRO_COLOR tint;
-    int entity;
-} Sprite;
-
-GENERATE_VECTOR_DECLARATION(Sprite)
-
-struct Unit {
-    Vec2  position;
-    Rect collider;
-    Vec2 destination;
-} ;
 
 typedef enum UnitState {
     IDLE,
@@ -62,46 +46,12 @@ typedef struct UnitComponent {
 
 GENERATE_VECTOR_DECLARATION(UnitComponent)
 
-typedef struct {
-    bool exists;
-    Rect rect;      // this should be in local space??
-    int mask;      // ignored for now
-    int entity;
-} Collider;
-
-GENERATE_VECTOR_DECLARATION(Collider)
-
-typedef struct {
-    int entity1;
-    int entity2;
-} CollisionData;
-
-GENERATE_VECTOR_DECLARATION(CollisionData)
-
-typedef struct GameState GameState;
+//typedef struct GameState GameState;
 
 
 void init_colliders(GameState* gs);
 
-void draw_sprites(GameState* gs) ;
 
-typedef struct Unit Unit;
-
-
-struct UnitEntry {
-    bool exists;
-    union {
-        struct {
-            int test;
-            int test2;
-        } tbd;
-        Unit unit;
-    };
-};
-
-typedef struct UnitEntry UnitEntry;
-
-GENERATE_VECTOR_DECLARATION(UnitEntry)
 
 void init_units(GameState* gs);
 

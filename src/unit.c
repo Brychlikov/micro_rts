@@ -4,14 +4,12 @@
 
 #include "unit.h"
 #include "gamestate.h"
+#include "sprite.h"
+#include "collider.h"
 #include <math.h>
 #define UNIT_SPEED 5
 #define PI 3.14159265
 
-GENERATE_VECTOR_DEFINITION(UnitEntry)
-GENERATE_VECTOR_DEFINITION(Sprite)
-GENERATE_VECTOR_DEFINITION(Collider)
-GENERATE_VECTOR_DEFINITION(CollisionData)
 GENERATE_VECTOR_DEFINITION(UnitComponent)
 
 struct ALLEGRO_BITMAP* unit_sprite;
@@ -24,7 +22,6 @@ void init_colliders(GameState* gs) {
 }
 
 void init_units(GameState* gs) {
-    printf("Size of UnitEntry: %ld\n", sizeof (struct UnitEntry));
     unit_sprite = al_load_bitmap("assets/unit.png");
     if (unit_sprite == NULL) {
         fprintf(stderr, "Could not load unit sprite");
@@ -147,13 +144,3 @@ void command_units(GameState *gs) {
     }
 }
 
-void draw_sprites(GameState* gs) {
-    for (int i = 0; i < VEC_LEN(gs->sprite_components); ++i) {
-        // for now assert that every entity with sprite has a valid transform
-        Sprite s = vec_Sprite_get(gs->sprite_components, i);
-        if(vec_bool_get(gs->entities, i)) {  // if entity still alive
-            Transform t = vec_Transform_get(gs->transform_components, i);
-            al_draw_tinted_rotated_bitmap(s.bitmap, s.tint, s.offset.x, s.offset.y, t.position.x, t.position.y, t.rotation + s.rotation, 0);    // disregard scale for now
-        }
-    }
-}

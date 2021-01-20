@@ -10,6 +10,7 @@
 #include "unit.h"
 #include "selection_ui.h"
 #include "mouse.h"
+#include "sprite.h"
 
 #define FUNARR_LEN(arr) (sizeof(arr)/sizeof(size_t))
 

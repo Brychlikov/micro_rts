@@ -10,6 +10,8 @@
 #include "unit.h"
 #include "vector.h"
 #include "mouse.h"
+#include "sprite.h"
+#include "collider.h"
 #include <allegro5/allegro_font.h>
 
 typedef int Entity;

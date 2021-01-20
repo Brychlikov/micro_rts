@@ -13,6 +13,7 @@
 #include "selection_ui.h"
 #include "unit.h"
 #include "mouse.h"
+#include "collider.h"
 
 void init_selection_system(GameState* gs) {
     gs->resources.selection.entities_selected = vec_int_new();
