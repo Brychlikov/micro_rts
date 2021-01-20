@@ -14,6 +14,9 @@
 #include "unit.h"
 #include "mouse.h"
 
+void init_selection_system(GameState* gs) {
+    gs->resources.selection.entities_selected = vec_int_new();
+}
 
 void draw_selection_area(GameState* gs) {
     Rect sa = gs->resources.selection.area;
@@ -33,26 +36,33 @@ void selection_system(GameState* gs) {
         gs->resources.selection.in_progress = false;
         gs->resources.selection.area.br = gs->resources.mouse_position;
 
-        vec_int_clear(gs->units_selected_indices);
+        vec_int_clear(gs->resources.selection.entities_selected);
 
         printf("querying for collisions\n");
-        for (size_t i = 0; i < VEC_LEN(gs->unit_entries); ++i) {
-            UnitEntry* unit_entry = vec_UnitEntry_get_ptr(gs->unit_entries, i);
-            if(unit_entry->exists) {
-                Collision collision_result = rect_collide(unit_entry->unit.collider, gs->resources.selection.area);
-                switch (collision_result) {
-                    case COLLISION:
-                        vec_int_push(gs->units_selected_indices, i);
-                        break;
-                    default:
-                        break;
-                }
+        for (size_t i = 0; i < VEC_LEN(gs->entities); ++i) {
+            if(!vec_bool_get(gs->entities, i)) continue;
+
+            Collider c = vec_Collider_get(gs->collider_components, i);
+            if(!c.exists) continue;
+
+            // if entity has a transform, rect is in local coord space
+            // and needs to be transformed to global space
+            Rect rect = c.rect;
+            Transform t = vec_Transform_get(gs->transform_components, i);
+            if(t.exists) rect = rect_local_to_global(rect, t.position);
+
+
+            // TODO check collision masks
+            Collision collision_result = rect_collide(rect, gs->resources.selection.area);
+
+            if(collision_result == COLLISION) {
+                vec_int_push(gs->resources.selection.entities_selected, i);
             }
 
         }
-        for(int i=0; i < VEC_LEN(gs->units_selected_indices); ++i) {
-            size_t index = vec_int_get(gs->units_selected_indices, i);
-            printf("Unit selected: %ld\n", index);
+        for(int i=0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
+            size_t index = vec_int_get(gs->resources.selection.entities_selected, i);
+            printf("Entity selected: %ld\n", index);
         }
     }
 

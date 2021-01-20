@@ -26,6 +26,7 @@ typedef struct GameState{
 
     bool redraw;
 
+    // resources
     struct {
         unsigned char keys[ALLEGRO_KEY_MAX];
         unsigned char mouse_buttons[MOUSE_KEY_MAX];
@@ -35,7 +36,12 @@ typedef struct GameState{
         struct {
             bool in_progress;
             Rect area;
+            Vector_int entities_selected;
         } selection;
+
+        struct {
+            Vector_CollisionData vec;
+        } collisions;
     } resources;
 
     Vector_bool entities;  // true - alive false - dead
@@ -43,9 +49,10 @@ typedef struct GameState{
     // Component land
     // invariant -- all the vectors have the same length as entities
     Vector_Transform transform_components;
+    Vector_Collider collider_components;
     Vector_Sprite sprite_components;
-    Vector_UnitEntry unit_entries;
-    Vector_int units_selected_indices;
+    Vector_UnitComponent unit_components;
+
 } GameState;
 
 void init_components(GameState* gs);

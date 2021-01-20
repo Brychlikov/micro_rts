@@ -7,6 +7,7 @@
 
 void draw_selection_area(GameState* );
 void selection_system(GameState*);
+void init_selection_system(GameState*);
 #define _RTS_SELECTION_UI_H
 
 #endif //_RTS_SELECTION_UI_H

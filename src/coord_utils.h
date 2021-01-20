@@ -46,6 +46,8 @@ float vec2_length(Vec2 v);
 
 Vec2 vec2_norm(Vec2 v);
 
+Rect rect_local_to_global(Rect r, Vec2 global_offset);
+
 Collision rect_collide(Rect r1, Rect r2);
 
 #endif //_RTS_COORD_UTILS_H

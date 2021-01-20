@@ -4,39 +4,34 @@
 
 #include "unit.h"
 #include "gamestate.h"
+#include <math.h>
 #define UNIT_SPEED 5
+#define PI 3.14159265
 
 GENERATE_VECTOR_DEFINITION(UnitEntry)
 GENERATE_VECTOR_DEFINITION(Sprite)
+GENERATE_VECTOR_DEFINITION(Collider)
+GENERATE_VECTOR_DEFINITION(CollisionData)
+GENERATE_VECTOR_DEFINITION(UnitComponent)
 
 struct ALLEGRO_BITMAP* unit_sprite;
+ALLEGRO_COLOR pure_tint;
+ALLEGRO_COLOR selected_tint;
 
+void init_colliders(GameState* gs) {
+    gs->resources.collisions.vec = vec_CollisionData_new();
+    gs->collider_components = vec_Collider_new();
+}
 
 void init_units(GameState* gs) {
     printf("Size of UnitEntry: %ld\n", sizeof (struct UnitEntry));
-    gs->unit_entries = vec_UnitEntry_new();
-    gs->units_selected_indices = vec_int_new();
     unit_sprite = al_load_bitmap("assets/unit.png");
     if (unit_sprite == NULL) {
         fprintf(stderr, "Could not load unit sprite");
     }
-    Unit new_unit = {
-            .position= {.x=200, .y=400},
-            .collider= {
-                .tl= {
-                    .x=200, .y=400,
-                },
-                .br={
-                    .x=280, .y=480
-            }},
-            .destination={.x=900, .y=100}
-    };
-    struct UnitEntry new_entry = {
-            .exists=true,
-            .unit=new_unit
-    };
-    vec_UnitEntry_push(gs->unit_entries, new_entry);
 
+    pure_tint = al_map_rgba_f(1, 1, 1, 1);
+    selected_tint = al_map_rgba_f(0.5, 0.5, 1, 1);
 
     // ECS land below
     int new = create_entity(gs);
@@ -50,67 +45,104 @@ void init_units(GameState* gs) {
     Sprite s = {
             .exists=true,
             .offset={.x=40, .y=40},
+            .rotation=PI/2,
             .bitmap=unit_sprite,
             .entity=new,
+            .tint=pure_tint,
     };
     *vec_Sprite_get_ptr(gs->sprite_components, new) = s;
+
+    Collider c = {
+            .exists=true,
+            .rect={
+                    .tl={.x=-40, .y=-40},
+                    .br={.x=40, .y=40},
+            },
+            .entity=new
+    };
+
+    *vec_Collider_get_ptr(gs->collider_components, new) = c;
+
+    UnitComponent uc = {
+            .exists=true,
+            .sm={
+                    .state=MOVE,
+                    .move= {
+                            .dest={.x=800, .y=600}
+                    }
+            },
+            .entity=new,
+    };
+
+    *vec_UnitComponent_get_ptr(gs->unit_components, new) = uc;
 }
 
-void draw_units(GameState *gs) {
-    for (int i = 0; i < gs->unit_entries.inner->length; ++i) {
-        struct UnitEntry u_e = vec_UnitEntry_get(gs->unit_entries, i);
-        if(u_e.exists) {
-            al_draw_bitmap(unit_sprite, u_e.unit.position.x, u_e.unit.position.y, 0);
-        }
-    }
-
-    //draw over selected units with tinted bitmap
-    for (int i = 0; i < gs->units_selected_indices.inner->length; ++i) {
-        int index = vec_int_get(gs->units_selected_indices, i);
-        struct UnitEntry u_e = vec_UnitEntry_get(gs->unit_entries, index);
-        if(u_e.exists) {
-            al_draw_tinted_bitmap(unit_sprite, al_map_rgb(0, 100, 0), u_e.unit.position.x, u_e.unit.position.y, 0);
-        }
-    }
-}
+//void draw_units(GameState *gs) {
+//    for (int i = 0; i < gs->unit_entries.inner->length; ++i) {
+//        struct UnitEntry u_e = vec_UnitEntry_get(gs->unit_entries, i);
+//        if(u_e.exists) {
+//            al_draw_bitmap(unit_sprite, u_e.unit.position.x, u_e.unit.position.y, 0);
+//        }
+//    }
+//
+//    //draw over selected units with tinted bitmap
+//    for (int i = 0; i < gs->units_selected_indices.inner->length; ++i) {
+//        int index = vec_int_get(gs->units_selected_indices, i);
+//        struct UnitEntry u_e = vec_UnitEntry_get(gs->unit_entries, index);
+//        if(u_e.exists) {
+//            al_draw_tinted_bitmap(unit_sprite, al_map_rgb(0, 100, 0), u_e.unit.position.x, u_e.unit.position.y, 0);
+//        }
+//    }
+//}
 
 
 void advance_units(GameState *gs) {
-    for (int i = 0; i < gs->unit_entries.inner->length; ++i) {
+    for (int i = 0; i < VEC_LEN(gs->entities); ++i) {
+        if(!vec_bool_get(gs->entities, i)) continue;
 
-        struct UnitEntry* u_e = vec_UnitEntry_get_ptr(gs->unit_entries, i);
-        if(u_e->exists) {
+        UnitComponent unit = vec_UnitComponent_get(gs->unit_components, i);
+        if(!unit.exists) continue;
 
-            Vec2 diff = vec2_sub(u_e->unit.destination, u_e->unit.position);
-            if(vec2_length(diff) <= UNIT_SPEED) {
-                u_e->unit.position = u_e->unit.destination;
-            }
-            else {
-                Vec2 dir = vec2_norm(diff);
-                Vec2 delta = vec2_scale(dir, UNIT_SPEED);
-//                printf("len: %f %f\n", vec2_length(dir), vec2_length(delta));
-//                printf("Delta: x=%f  y=%f\n", delta.x, delta.y);
-                u_e->unit.position = vec2_add(u_e->unit.position, delta);
-                u_e->unit.collider.tl = vec2_add(u_e->unit.collider.tl, delta);
-                u_e->unit.collider.br = vec2_add(u_e->unit.collider.br, delta);
-//                printf("New pos: x=%f  y=%f\n\n", u_e->unit.position.x, u_e->unit.position.y);
-            }
+        Transform* t = vec_Transform_get_ptr(gs->transform_components, i);
 
+        switch(unit.sm.state) {
+            case MOVE:
+                ;     // I hate this language sooooo much
+                Vec2 diff = vec2_sub(unit.sm.move.dest, t->position);
+                Vec2 delta;
+                if(vec2_length(diff) <= UNIT_SPEED) {
+                    delta = vec2_sub(unit.sm.move.dest, t->position);
+                }
+                else {
+                    Vec2 dir = vec2_norm(diff);
+                    delta = vec2_scale(dir, UNIT_SPEED);
+                }
+                float angle = atan2f(delta.y, delta.x);
+                t->position = vec2_add(t->position, delta);
+                t->rotation = angle;
+                break;
+            case IDLE:
+                break;
+            default:
+                break;
         }
+
 
     }
 }
 
-void command_units(GameState *gs, ALLEGRO_EVENT event) {
-    if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP && event.mouse.button == 2) {
-        printf("giving commands\n");
-        for (int i = 0; i < VEC_LEN(gs->units_selected_indices); ++i) {
-            printf("command issued to unit %d\n", i);
-            int index = vec_int_get(gs->units_selected_indices, i);
-            UnitEntry* unit_entry = vec_UnitEntry_get_ptr(gs->unit_entries, index);
-            if(unit_entry->exists) {
-                unit_entry->unit.destination = gs->resources.mouse_position;
-            }
+void command_units(GameState *gs) {
+    if(gs->resources.mouse_buttons[RIGHT_MOUSE_BUTTON]) {
+//        printf("giving commands\n");
+        for (int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
+//            printf("command issued to unit %d\n", i);
+            int entity = vec_int_get(gs->resources.selection.entities_selected, i);
+
+            UnitComponent* ue = vec_UnitComponent_get_ptr(gs->unit_components, entity);
+            if(!ue->exists) continue;
+
+            ue->sm.state = MOVE;
+            ue->sm.move.dest = gs->resources.mouse_position;
         }
     }
 }
@@ -121,7 +153,7 @@ void draw_sprites(GameState* gs) {
         Sprite s = vec_Sprite_get(gs->sprite_components, i);
         if(vec_bool_get(gs->entities, i)) {  // if entity still alive
             Transform t = vec_Transform_get(gs->transform_components, i);
-            al_draw_rotated_bitmap(s.bitmap, s.offset.x, s.offset.y, t.position.x, t.position.y, t.rotation, 0);    // disregard scale for now
+            al_draw_tinted_rotated_bitmap(s.bitmap, s.tint, s.offset.x, s.offset.y, t.position.x, t.position.y, t.rotation + s.rotation, 0);    // disregard scale for now
         }
     }
 }
