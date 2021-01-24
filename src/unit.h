@@ -13,6 +13,8 @@
 #include "gamestate_forward.h"
 
 extern ALLEGRO_BITMAP* unit_sprite;
+extern ALLEGRO_COLOR pure_tint;
+extern ALLEGRO_COLOR selected_tint;
 
 typedef enum UnitState {
     IDLE,

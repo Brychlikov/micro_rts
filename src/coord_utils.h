@@ -33,6 +33,9 @@ typedef struct {
 } Transform;
 
 GENERATE_VECTOR_DECLARATION(Transform)
+GENERATE_VECTOR_DECLARATION(Vec2)
+
+Vec2 vec2_make(float x, float y);
 
 Vec2 vec2_add(Vec2 a, Vec2 b);
 
@@ -43,6 +46,8 @@ Vec2 vec2_sub(Vec2 a, Vec2 b);
 Vec2 vec2_scale(Vec2 v, float scalar);
 
 float vec2_length(Vec2 v);
+
+float vec2_length_sq(Vec2 v);
 
 Vec2 vec2_norm(Vec2 v);
 

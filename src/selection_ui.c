@@ -17,6 +17,10 @@
 
 void init_selection_system(GameState* gs) {
     gs->resources.selection.entities_selected = vec_int_new();
+    printf("Selection init'ed at  %lx, buffer at %x with size %d\n",
+           gs->resources.selection.entities_selected.inner,
+           gs->resources.selection.entities_selected.inner->buf,
+           gs->resources.selection.entities_selected.inner->type_size);
 }
 
 void draw_selection_area(GameState* gs) {

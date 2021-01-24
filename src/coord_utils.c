@@ -3,6 +3,12 @@
 #include "vector.h"
 
 GENERATE_VECTOR_DEFINITION(Transform)
+GENERATE_VECTOR_DEFINITION(Vec2)
+
+Vec2 vec2_make(float x, float y) {
+    Vec2 res = {.x=x, .y=y};
+    return res;
+}
 
 Vec2 vec2_add(Vec2 a, Vec2 b) {
     Vec2 res = {
@@ -34,6 +40,10 @@ Vec2 vec2_sub(Vec2 a, Vec2 b) {
 
 float vec2_length(Vec2 v) {
     return sqrtf(v.x * v.x + v.y * v.y);
+}
+
+float vec2_length_sq(Vec2 v) {
+    return v.x * v.x + v.y * v.y;
 }
 
 Vec2 vec2_norm(Vec2 v) {
