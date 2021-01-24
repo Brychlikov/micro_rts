@@ -15,12 +15,16 @@
 #define REPEL_MULTIPLIER 200000.0
 #define ATTRACT_MULTIPLIER 50.0
 
+#define UNIT_ATTACK_RANGE 400
+#define UNIT_HP 100
+
 GENERATE_VECTOR_DEFINITION(UnitComponent)
+
 
 ALLEGRO_COLOR pure_tint;
 ALLEGRO_COLOR selected_tint;
 
-void create_unit(GameState* gs, Vec2 position) {
+void create_unit(GameState* gs, Vec2 position, int team) {
 
     int new = create_entity(gs);
     Transform t = {
@@ -59,6 +63,14 @@ void create_unit(GameState* gs, Vec2 position) {
             .entity=new,
     };
     *vec_UnitComponent_get_ptr(gs->unit_components, new) = uc;
+
+    Health h = {
+            .exists=true,
+            .team=team,
+            .points=UNIT_HP,
+            .entity=new,
+    };
+    *vec_Health_get_ptr(gs->health_components, new) = h;
 }
 
 void init_units(GameState* gs) {
@@ -67,15 +79,15 @@ void init_units(GameState* gs) {
     selected_tint = al_map_rgba_f(0.3, 1, 0.3, 1);
 
     // ECS land below
-    create_unit(gs, vec2_make(100, 100));
-    create_unit(gs, vec2_make(200, 100));
-    create_unit(gs, vec2_make(300, 100));
-    create_unit(gs, vec2_make(100, 200));
-    create_unit(gs, vec2_make(200, 200));
-    create_unit(gs, vec2_make(300, 200));
-    create_unit(gs, vec2_make(100, 300));
-    create_unit(gs, vec2_make(200, 300));
-    create_unit(gs, vec2_make(300, 300));
+    create_unit(gs, vec2_make(100, 100), 0);
+    create_unit(gs, vec2_make(200, 100), 0);
+    create_unit(gs, vec2_make(300, 100), 0);
+    create_unit(gs, vec2_make(100, 200), 0);
+    create_unit(gs, vec2_make(200, 200), 0);
+    create_unit(gs, vec2_make(300, 200), 0);
+    create_unit(gs, vec2_make(100, 300), 0);
+    create_unit(gs, vec2_make(200, 300), 0);
+    create_unit(gs, vec2_make(300, 300), 0);
 }
 
 //void draw_units(GameState *gs) {
@@ -96,23 +108,74 @@ void init_units(GameState* gs) {
 //    }
 //}
 
+int target_unit(GameState* gs, int targeting, Vector_int targetables) {
+    // targetables - vector of entities having Health and Transform components
+
+    // returns the closest targetable unit in range, -1 otherwise
+    int result = -1;
+    float closest_distance = INFINITY;
+    Transform targeting_transform = vec_Transform_get(gs->transform_components, targeting);
+    Health targeting_health = vec_Health_get(gs->health_components, targeting);
+    assert(targeting_transform.exists);
+
+    for (int i = 0; i < VEC_LEN(targetables); ++i) {
+        int entity = vec_int_get(targetables, i);
+        Transform t = vec_Transform_get(gs->transform_components, entity);
+        assert(t.exists);
+        Health h = vec_Health_get(gs->health_components, entity);
+        assert(h.exists);
+
+        float dist = vec2_length(vec2_sub(t.position, targeting_transform.position));
+        if(dist <= UNIT_ATTACK_RANGE && dist < closest_distance && h.team != targeting_health.team) {
+            result = entity;
+            closest_distance = dist;
+        }
+    }
+
+    return result;
+}
 
 void advance_units(GameState *gs) {
+    // prepare vector of targetable entities:
+    Vector_int targetables = vec_int_new();
+    for (int i = 0; i < VEC_LEN(gs->entities); ++i) {
+        Transform t = vec_Transform_get(gs->transform_components, i);
+        if(!t.exists) continue;
+
+        Health h = vec_Health_get(gs->health_components, i);
+        if(!h.exists) continue;
+
+        vec_int_push(targetables, i);
+    }
+
     for (int i = 0; i < VEC_LEN(gs->entities); ++i) {
         if(!vec_bool_get(gs->entities, i)) continue;
 
-        UnitComponent unit = vec_UnitComponent_get(gs->unit_components, i);
-        if(!unit.exists) continue;
+        UnitComponent* unit = vec_UnitComponent_get_ptr(gs->unit_components, i);
+        if(!unit->exists) continue;
 
         Transform* t = vec_Transform_get_ptr(gs->transform_components, i);
 
-        switch(unit.sm.state) {
+        switch(unit->sm.state) {
+            case A_MOVE:
+                ;
+                int target = target_unit(gs, i, targetables);
+                if(target != -1) {
+                    unit->sm.state = AGGRESSIVE;
+                    Vec2 prev_dest = unit->sm.a_move.dest;
+                    unit->sm.aggressive.target = target;
+                    unit->sm.aggressive.next = A_MOVE;
+                    unit->sm.aggressive.next_dest = prev_dest;
+                    break;
+                }
+                // here we depend on move and a_move structs inside UnitStateMachine having the same layout
+                // if no target found, proceed to MOVE
             case MOVE:
                 ;     // I hate this language sooooo much
-                Vec2 diff = vec2_sub(unit.sm.move.dest, t->position);
+                Vec2 diff = vec2_sub(unit->sm.move.dest, t->position);
                 Vec2 delta;
                 if(vec2_length(diff) <= UNIT_SPEED) {
-                    delta = vec2_sub(unit.sm.move.dest, t->position);
+                    delta = vec2_sub(unit->sm.move.dest, t->position);
                 }
                 else {
                     Vec2 dir = vec2_norm(diff);
@@ -121,6 +184,30 @@ void advance_units(GameState *gs) {
                 float angle = atan2f(delta.y, delta.x);
                 t->position = vec2_add(t->position, delta);
                 t->rotation = angle;
+                break;
+            case AGGRESSIVE:
+                ;
+                if(!vec_bool_get(gs->entities, unit->sm.aggressive.target)) { // if target is dead
+                    unit->sm.state = unit->sm.aggressive.next;
+
+                    // once again depending on same layout of move and a-move
+                    unit->sm.move.dest = unit->sm.aggressive.next_dest;
+                    break;
+                }
+
+                // turn unit to face the enemy:
+                Transform target_transform = vec_Transform_get(gs->transform_components, unit->sm.aggressive.target);
+                assert(target_transform.exists);
+                Vec2 to_enemy = vec2_sub(target_transform.position, t->position);
+                angle = atan2f(to_enemy.y, to_enemy.x);
+                t->rotation = angle;
+
+                struct timespec now;
+                clock_gettime(CLOCK_MONOTONIC_RAW, &now);
+                if(now.tv_sec - 1 >= unit->sm.aggressive.last_shot_timestamp.tv_sec) {
+                    printf("Unit %d stares at entity %d angrily >:(\n", i, unit->sm.aggressive.target);
+                    unit->sm.aggressive.last_shot_timestamp = now;
+                }
                 break;
             case IDLE:
                 break;
@@ -133,7 +220,7 @@ void advance_units(GameState *gs) {
 }
 
 void command_units(GameState *gs) {
-    if(gs->resources.mouse_buttons[RIGHT_MOUSE_BUTTON]) {
+    if(gs->resources.mouse_buttons[RIGHT_MOUSE_BUTTON] || gs->resources.keys[ALLEGRO_KEY_A]) {
         Vec2 mean_position = vec2_make(0, 0);
         int unit_count = 0;
 
@@ -219,8 +306,14 @@ void command_units(GameState *gs) {
             UnitComponent* ue = vec_UnitComponent_get_ptr(gs->unit_components, entity);
             assert(ue->exists);
 
-            ue->sm.state = MOVE;
-            ue->sm.move.dest = vec2_sub(gs->resources.mouse_position, offset);
+            if(gs->resources.keys[ALLEGRO_KEY_A]) {  // A_MOVE
+                ue->sm.state = A_MOVE;
+                ue->sm.a_move.dest = vec2_sub(gs->resources.mouse_position, offset);
+            }
+            else {  // MOVE
+                ue->sm.state = MOVE;
+                ue->sm.move.dest = vec2_sub(gs->resources.mouse_position, offset);
+            }
         }
         vec_int_destroy(units_selected);
         vec_Vec2_destroy(offsets);

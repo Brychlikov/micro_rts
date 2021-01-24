@@ -10,6 +10,7 @@
 //#include "gamestate.h"
 #include <allegro5/allegro5.h>
 #include "vector.h"
+#include <time.h>
 #include "gamestate_forward.h"
 
 extern ALLEGRO_COLOR pure_tint;
@@ -35,6 +36,8 @@ typedef struct UnitStateMachine {
         struct {
             int target;
             UnitState next;
+            Vec2 next_dest;
+            struct timespec last_shot_timestamp;
         } aggressive;
     };
 } UnitStateMachine;

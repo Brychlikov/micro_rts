@@ -117,7 +117,7 @@ int main()
 
     gs.redraw = true;
 
-    create_building(&gs, vec2_make(800, 100), 0);
+    create_building(&gs, vec2_make(800, 100), 1);
 
     ALLEGRO_EVENT event;
 
