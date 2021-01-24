@@ -74,7 +74,7 @@ void init_units(GameState* gs) {
     }
 
     pure_tint = al_map_rgba_f(1, 1, 1, 1);
-    selected_tint = al_map_rgba_f(0.5, 0.5, 1, 1);
+    selected_tint = al_map_rgba_f(0.3, 1, 0.3, 1);
 
     // ECS land below
     create_unit(gs, vec2_make(100, 100));

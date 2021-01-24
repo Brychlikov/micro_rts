@@ -12,6 +12,7 @@
 #include "mouse.h"
 #include "sprite.h"
 #include "collider.h"
+#include "health.h"
 #include <allegro5/allegro_font.h>
 
 typedef int Entity;
@@ -54,11 +55,14 @@ typedef struct GameState{
     Vector_Collider collider_components;
     Vector_Sprite sprite_components;
     Vector_UnitComponent unit_components;
+    Vector_Health health_components;
 
 } GameState;
 
 void init_components(GameState* gs);
 
 int create_entity(GameState* gs);
+
+void destroy_entity(GameState* gs, Entity entity);
 
 #endif //_RTS_GAMESTATE_H

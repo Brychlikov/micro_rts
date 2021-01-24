@@ -68,6 +68,7 @@ PURE_SYSTEM init_fns[] = {
         init_components,
         init_selection_system,
         init_colliders,
+        init_health,
 
         init_units,
 };
@@ -84,6 +85,7 @@ PURE_SYSTEM redraw_fns[] = {
         selection_system,
         draw_selection_area,
         advance_units,
+        health_system,
 //        draw_units,
         draw_sprites,
         command_units,
