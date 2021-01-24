@@ -151,6 +151,8 @@ void command_units(GameState *gs) {
             }
         }
 
+        if(unit_count == 0) return;
+
         mean_position = vec2_scale(mean_position, 1.0 / unit_count);
 
         // calculate the center unit

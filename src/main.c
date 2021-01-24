@@ -11,6 +11,8 @@
 #include "selection_ui.h"
 #include "mouse.h"
 #include "sprite.h"
+#include "collider.h"
+#include "building.h"
 
 #define FUNARR_LEN(arr) (sizeof(arr)/sizeof(size_t))
 
@@ -114,6 +116,8 @@ int main()
     }
 
     gs.redraw = true;
+
+    create_building(&gs, vec2_make(800, 100), 0);
 
     ALLEGRO_EVENT event;
 
