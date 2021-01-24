@@ -69,6 +69,7 @@ PURE_SYSTEM init_fns[] = {
         init_selection_system,
         init_colliders,
         init_health,
+        init_sprites,
 
         init_units,
 };

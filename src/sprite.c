@@ -7,6 +7,18 @@
 
 GENERATE_VECTOR_DEFINITION(Sprite)
 
+void init_sprites(GameState* gs) {
+    gs->sprite_components = vec_Sprite_new();
+    gs->resources.sprites.unit = al_load_bitmap("assets/unit.png");
+    if (gs->resources.sprites.unit == NULL) {
+        fprintf(stderr, "Could not load unit sprite\n");
+    }
+    gs->resources.sprites.building = al_load_bitmap("assets/building.png");
+    if(gs->resources.sprites.building == NULL) {
+        fprintf(stderr, "Could not load building sprite\n");
+    }
+}
+
 void draw_sprites(GameState* gs) {
     for (int i = 0; i < VEC_LEN(gs->sprite_components); ++i) {
         // for now assert that every entity with sprite has a valid transform

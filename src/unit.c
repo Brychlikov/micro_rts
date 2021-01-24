@@ -17,7 +17,6 @@
 
 GENERATE_VECTOR_DEFINITION(UnitComponent)
 
-ALLEGRO_BITMAP* unit_sprite;
 ALLEGRO_COLOR pure_tint;
 ALLEGRO_COLOR selected_tint;
 
@@ -40,7 +39,7 @@ void create_unit(GameState* gs, Vec2 position) {
             .exists=true,
             .offset={.x=40, .y=40},
             .rotation=PI/2,
-            .bitmap=unit_sprite,
+            .bitmap=gs->resources.sprites.unit,
             .entity=new,
             .tint=pure_tint,
     };
@@ -68,10 +67,6 @@ void create_unit(GameState* gs, Vec2 position) {
 }
 
 void init_units(GameState* gs) {
-    unit_sprite = al_load_bitmap("assets/unit.png");
-    if (unit_sprite == NULL) {
-        fprintf(stderr, "Could not load unit sprite");
-    }
 
     pure_tint = al_map_rgba_f(1, 1, 1, 1);
     selected_tint = al_map_rgba_f(0.3, 1, 0.3, 1);

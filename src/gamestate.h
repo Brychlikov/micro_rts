@@ -45,6 +45,11 @@ typedef struct GameState{
         struct {
             Vector_CollisionData vec;
         } collisions;
+
+        struct {
+            ALLEGRO_BITMAP* unit;
+            ALLEGRO_BITMAP* building;
+        } sprites;
     } resources;
 
     Vector_bool entities;  // true - alive false - dead
