@@ -20,11 +20,6 @@ GENERATE_VECTOR_DEFINITION(UnitComponent)
 ALLEGRO_COLOR pure_tint;
 ALLEGRO_COLOR selected_tint;
 
-void init_colliders(GameState* gs) {
-    gs->resources.collisions.vec = vec_CollisionData_new();
-    gs->collider_components = vec_Collider_new();
-}
-
 void create_unit(GameState* gs, Vec2 position) {
 
     int new = create_entity(gs);

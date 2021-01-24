@@ -50,9 +50,6 @@ GENERATE_VECTOR_DECLARATION(UnitComponent)
 //typedef struct GameState GameState;
 
 
-void init_colliders(GameState* gs);
-
-
 
 void init_units(GameState* gs);
 

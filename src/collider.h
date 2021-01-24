@@ -5,8 +5,10 @@
 #ifndef _RTS_COLLIDER_H
 #define _RTS_COLLIDER_H
 
+#include <allegro5/allegro5.h>
 #include "coord_utils.h"
 #include "vector.h"
+#include "gamestate_forward.h"
 
 typedef struct {
     bool exists;
@@ -21,5 +23,7 @@ typedef struct {
 
 GENERATE_VECTOR_DECLARATION(Collider)
 GENERATE_VECTOR_DECLARATION(CollisionData)
+
+void init_colliders(GameState* gs);
 
 #endif //_RTS_COLLIDER_H
