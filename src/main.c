@@ -60,6 +60,18 @@ void prep_redraw(GameState* gs) {
     al_clear_to_color(al_map_rgb(50, 50, 80));
 }
 
+void print_collisions(GameState* gs) {
+    for (int i = 0; i < VEC_LEN(gs->resources.collisions.vec); ++i) {
+        CollisionData* cd = vec_CollisionData_get_ptr(gs->resources.collisions.vec, i);
+        if(cd->entity == -1) continue;
+        printf("Collisions of entity %d:\n", i);
+        while(cd != NULL && cd->entity != -1) {
+            printf("\tentity %d\n", cd->entity);
+            cd = cd->next;
+        }
+        printf("\n");
+    }
+}
 
 PURE_SYSTEM init_fns[] = {
         misc_allegro_init,
@@ -87,6 +99,8 @@ PURE_SYSTEM redraw_fns[] = {
         prep_redraw,
         selection_system,
         draw_selection_area,
+        check_collisions,
+        print_collisions,
         advance_units,
         health_system,
 //        draw_units,

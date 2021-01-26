@@ -44,6 +44,7 @@ typedef struct GameState{
 
         struct {
             Vector_CollisionData vec;
+            int masks[32];
         } collisions;
 
         struct {

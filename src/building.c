@@ -51,6 +51,7 @@ void create_building(GameState* gs, Vec2 position, int team) {
                     .tl={.x=-50, .y=-50},
                     .br={.x=50, .y=50},
             },
+            .mask=ENEMY_BUILDING,
             .entity=new,
     };
 

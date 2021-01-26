@@ -50,6 +50,7 @@ void create_unit(GameState* gs, Vec2 position, int team) {
                     .tl={.x=-40, .y=-40},
                     .br={.x=40, .y=40},
             },
+            .mask=FRIENDLY_UNIT,
             .entity=new
     };
 
