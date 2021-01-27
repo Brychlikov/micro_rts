@@ -12,7 +12,7 @@
 #define PI 3.14159265
 #define GROUPING_ITERATIONS 10
 #define GROUPING_STEP 5
-#define REPEL_MULTIPLIER 200000.0
+#define REPEL_MULTIPLIER 50000.0
 #define ATTRACT_MULTIPLIER 50.0
 
 #define UNIT_ATTACK_RANGE 400
@@ -31,7 +31,7 @@ void create_unit(GameState* gs, Vec2 position, int team) {
             .exists=true,
             .position=position,
             .rotation=1,
-            .scale=1,
+            .scale=0.4,
             .entity=new
     };
     *vec_Transform_get_ptr(gs->transform_components, new) = t;

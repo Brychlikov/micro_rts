@@ -43,6 +43,9 @@ void init_colliders(GameState* gs);
 
 void check_collisions(GameState* gs);
 
+void draw_colliders(GameState* gs);
+
+
 bool check_mask(GameState* gs, int mask1, int mask2);
 
 #endif //_RTS_COLLIDER_H

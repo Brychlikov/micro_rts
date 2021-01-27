@@ -9,7 +9,7 @@
 #include "health.h"
 #include "coord_utils.h"
 
-#define BUILDING_MAX_HP 200
+#define BUILDING_MAX_HP 1000
 
 
 void create_building(GameState* gs, Vec2 position, int team) {

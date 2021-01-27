@@ -17,6 +17,9 @@ void create_bullet(GameState* gs, Transform t, int team) {
     int new = create_entity(gs);
     t.entity = new;
 
+    // override scale of creator
+    t.scale = 0.4;
+
     *vec_Transform_get_ptr(gs->transform_components, new) = t;
 
     BulletComponent bc = {

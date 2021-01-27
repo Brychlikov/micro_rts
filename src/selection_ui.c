@@ -62,7 +62,7 @@ void selection_system(GameState* gs) {
             // and needs to be transformed to global space
             Rect rect = c.rect;
             Transform t = vec_Transform_get(gs->transform_components, i);
-            if(t.exists) rect = rect_local_to_global(rect, t.position);
+            if(t.exists) rect = rect_local_to_global(rect, t);
 
 
             // TODO check collision masks

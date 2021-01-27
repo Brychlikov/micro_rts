@@ -58,16 +58,16 @@ Vec2 vec2_norm(Vec2 v) {
     return vec2_scale(v, 1/vec2_length(v));
 }
 
-Rect rect_local_to_global(Rect r, Vec2 global_offset) {
+Rect rect_local_to_global(Rect r, Transform entity_transform) {
     Rect res = {
             .tl= {
-                    .x = r.tl.x + global_offset.x,
-                    .y = r.tl.y + global_offset.y
+                    .x = r.tl.x * entity_transform.scale + entity_transform.position.x,
+                    .y = r.tl.y * entity_transform.scale + entity_transform.position.y
             },
 
             .br= {
-                    .x = r.br.x + global_offset.x,
-                    .y = r.br.y + global_offset.y
+                    .x = r.br.x * entity_transform.scale + entity_transform.position.x,
+                    .y = r.br.y * entity_transform.scale + entity_transform.position.y
             }
     };
     return res;

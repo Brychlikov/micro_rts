@@ -104,6 +104,10 @@ PURE_SYSTEM redraw_fns[] = {
         advance_units,
         process_bullets,
         health_system,
+
+#ifdef DEBUG_COLLIDERS
+        draw_colliders,
+#endif
 //        draw_units,
         draw_sprites,
         command_units,

@@ -7,6 +7,7 @@
 #include "gamestate.h"
 #include "unit.h"
 #include "collider.h"
+#include "allegro5/allegro_primitives.h"
 
 GENERATE_VECTOR_DEFINITION(Collider)
 GENERATE_VECTOR_DEFINITION(CollisionData)
@@ -55,6 +56,19 @@ void push_collision(CollisionData* cd, int entity) {
     }
 }
 
+void draw_colliders(GameState *gs) {
+    for (int i = 0; i < VEC_LEN(gs->entities); ++i) {
+        bool alive = vec_bool_get(gs->entities, i);
+        Collider c = vec_Collider_get(gs->collider_components, i);
+        Transform t = vec_Transform_get(gs->transform_components, i);
+        if(!alive || !c.exists || !t.exists) continue;
+
+        Rect r = rect_local_to_global(c.rect, t);
+
+        al_draw_filled_rectangle(RECT_COORDINATES(r), al_map_rgba_f(0, 0.1, 0.5, 0.1));
+    }
+}
+
 void check_collisions(GameState* gs) {
     // begin by freeing previous collisions
     for (int i = 0; i < VEC_LEN(gs->resources.collisions.vec); ++i) {
@@ -77,7 +91,7 @@ void check_collisions(GameState* gs) {
         Collider c1 = vec_Collider_get(gs->collider_components, entity1);
         Rect rect1 = c1.rect;
         Transform t = vec_Transform_get(gs->transform_components, entity1);
-        if(t.exists) rect1 = rect_local_to_global(rect1, t.position);
+        if(t.exists) rect1 = rect_local_to_global(rect1, t);
 
         for (int j = 0; j < VEC_LEN(collidables); ++j) {
             if(i >= j) continue;
@@ -86,7 +100,7 @@ void check_collisions(GameState* gs) {
             Collider c2 = vec_Collider_get(gs->collider_components, entity2);
             Rect rect2 = c2.rect;
             Transform t2 = vec_Transform_get(gs->transform_components, entity2);
-            if(t.exists) rect2 = rect_local_to_global(rect2, t2.position);
+            if(t.exists) rect2 = rect_local_to_global(rect2, t2);
 
             if(check_mask(gs, c1.mask, c2.mask)) {
                 Collision collision_result = rect_collide(rect1, rect2);
