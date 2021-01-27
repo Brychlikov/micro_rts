@@ -22,6 +22,7 @@ int create_entity(GameState* gs) {
     vec_UnitComponent_push_zero(gs->unit_components);
     vec_Collider_push_zero(gs->collider_components);
     vec_Health_push_zero(gs->health_components);
+    vec_BulletComponent_push_zero(gs->bullet_components);
 
     // add empty CollisionData element too
     CollisionData cd = {.entity=-1, .next=NULL};
@@ -40,5 +41,6 @@ void destroy_entity(GameState* gs, Entity entity) {
     vec_UnitComponent_get_ptr(gs->unit_components, entity)->exists = false;
     vec_Collider_get_ptr(gs->collider_components, entity)->exists = false;
     vec_Health_get_ptr(gs->health_components, entity)->exists = false;
+    vec_BulletComponent_get_ptr(gs->bullet_components, entity)->exists = false;
 }
 

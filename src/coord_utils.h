@@ -37,6 +37,8 @@ GENERATE_VECTOR_DECLARATION(Vec2)
 
 Vec2 vec2_make(float x, float y);
 
+Vec2 vec2_unit_from_radius(float radius);
+
 Vec2 vec2_add(Vec2 a, Vec2 b);
 
 Vec2 vec2_flip(Vec2 v);

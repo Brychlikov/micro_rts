@@ -13,6 +13,7 @@
 #include "sprite.h"
 #include "collider.h"
 #include "health.h"
+#include "bullet.h"
 #include <allegro5/allegro_font.h>
 
 typedef int Entity;
@@ -50,9 +51,12 @@ typedef struct GameState{
         struct {
             ALLEGRO_BITMAP* unit;
             ALLEGRO_BITMAP* building;
+            ALLEGRO_BITMAP* bullet;
         } sprites;
     } resources;
 
+    // todo
+    // split sprites and resources from gamestate
     Vector_bool entities;  // true - alive false - dead
 
     // Component land
@@ -62,6 +66,7 @@ typedef struct GameState{
     Vector_Sprite sprite_components;
     Vector_UnitComponent unit_components;
     Vector_Health health_components;
+    Vector_BulletComponent bullet_components;
 
 } GameState;
 

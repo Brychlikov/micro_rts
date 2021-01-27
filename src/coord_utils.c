@@ -10,6 +10,14 @@ Vec2 vec2_make(float x, float y) {
     return res;
 }
 
+Vec2 vec2_unit_from_radius(float radius) {
+    Vec2 res = {
+            .x=cosf(radius),
+            .y=sinf(radius),
+    };
+    return res;
+}
+
 Vec2 vec2_add(Vec2 a, Vec2 b) {
     Vec2 res = {
             .x=a.x + b.x,

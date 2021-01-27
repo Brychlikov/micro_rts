@@ -8,6 +8,9 @@
 #include "vector.h"
 #include "gamestate_forward.h"
 
+#define PLAYER_TEAM 0
+#define ENEMY_TEAM 1
+
 typedef struct {
     bool exists;
     int points;

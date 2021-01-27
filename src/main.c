@@ -84,7 +84,7 @@ PURE_SYSTEM init_fns[] = {
         init_colliders,
         init_health,
         init_sprites,
-
+        init_bullets,
         init_units,
 };
 
@@ -102,6 +102,7 @@ PURE_SYSTEM redraw_fns[] = {
         check_collisions,
         print_collisions,
         advance_units,
+        process_bullets,
         health_system,
 //        draw_units,
         draw_sprites,

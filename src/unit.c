@@ -31,6 +31,7 @@ void create_unit(GameState* gs, Vec2 position, int team) {
             .exists=true,
             .position=position,
             .rotation=1,
+            .scale=1,
             .entity=new
     };
     *vec_Transform_get_ptr(gs->transform_components, new) = t;
@@ -155,7 +156,8 @@ void advance_units(GameState *gs) {
         UnitComponent* unit = vec_UnitComponent_get_ptr(gs->unit_components, i);
         if(!unit->exists) continue;
 
-        Transform* t = vec_Transform_get_ptr(gs->transform_components, i);
+        Transform* my_transform = vec_Transform_get_ptr(gs->transform_components, i);
+        Health my_health = vec_Health_get(gs->health_components, i);
 
         switch(unit->sm.state) {
             case A_MOVE:
@@ -173,18 +175,18 @@ void advance_units(GameState *gs) {
                 // if no target found, proceed to MOVE
             case MOVE:
                 ;     // I hate this language sooooo much
-                Vec2 diff = vec2_sub(unit->sm.move.dest, t->position);
+                Vec2 diff = vec2_sub(unit->sm.move.dest, my_transform->position);
                 Vec2 delta;
                 if(vec2_length(diff) <= UNIT_SPEED) {
-                    delta = vec2_sub(unit->sm.move.dest, t->position);
+                    delta = vec2_sub(unit->sm.move.dest, my_transform->position);
                 }
                 else {
                     Vec2 dir = vec2_norm(diff);
                     delta = vec2_scale(dir, UNIT_SPEED);
                 }
                 float angle = atan2f(delta.y, delta.x);
-                t->position = vec2_add(t->position, delta);
-                t->rotation = angle;
+                my_transform->position = vec2_add(my_transform->position, delta);
+                my_transform->rotation = angle;
                 break;
             case AGGRESSIVE:
                 ;
@@ -199,14 +201,14 @@ void advance_units(GameState *gs) {
                 // turn unit to face the enemy:
                 Transform target_transform = vec_Transform_get(gs->transform_components, unit->sm.aggressive.target);
                 assert(target_transform.exists);
-                Vec2 to_enemy = vec2_sub(target_transform.position, t->position);
+                Vec2 to_enemy = vec2_sub(target_transform.position, my_transform->position);
                 angle = atan2f(to_enemy.y, to_enemy.x);
-                t->rotation = angle;
+                my_transform->rotation = angle;
 
                 struct timespec now;
                 clock_gettime(CLOCK_MONOTONIC_RAW, &now);
                 if(now.tv_sec - 1 >= unit->sm.aggressive.last_shot_timestamp.tv_sec) {
-                    printf("Unit %d stares at entity %d angrily >:(\n", i, unit->sm.aggressive.target);
+                    create_bullet(gs, *my_transform, my_health.team);
                     unit->sm.aggressive.last_shot_timestamp = now;
                 }
                 break;

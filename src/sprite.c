@@ -17,6 +17,11 @@ void init_sprites(GameState* gs) {
     if(gs->resources.sprites.building == NULL) {
         fprintf(stderr, "Could not load building sprite\n");
     }
+
+    gs->resources.sprites.bullet = al_load_bitmap("assets/bullet.png");
+    if(gs->resources.sprites.bullet == NULL) {
+        fprintf(stderr, "Could not load bullet sprite\n");
+    }
 }
 
 void draw_sprites(GameState* gs) {
@@ -25,7 +30,7 @@ void draw_sprites(GameState* gs) {
         Sprite s = vec_Sprite_get(gs->sprite_components, i);
         if(vec_bool_get(gs->entities, i)) {  // if entity still alive
             Transform t = vec_Transform_get(gs->transform_components, i);
-            al_draw_tinted_rotated_bitmap(s.bitmap, s.tint, s.offset.x, s.offset.y, t.position.x, t.position.y, t.rotation + s.rotation, 0);    // disregard scale for now
+            al_draw_tinted_scaled_rotated_bitmap(s.bitmap, s.tint, s.offset.x, s.offset.y, t.position.x, t.position.y, t.scale, t.scale, t.rotation + s.rotation, 0);    // disregard scale for now
         }
     }
 }
