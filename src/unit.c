@@ -24,7 +24,7 @@ GENERATE_VECTOR_DEFINITION(UnitComponent)
 ALLEGRO_COLOR pure_tint;
 ALLEGRO_COLOR selected_tint;
 
-void create_unit(GameState* gs, Vec2 position, int team) {
+int create_unit(GameState *gs, Vec2 position, int team) {
 
     int new = create_entity(gs);
     Transform t = {
@@ -45,13 +45,15 @@ void create_unit(GameState* gs, Vec2 position, int team) {
     };
     *vec_Sprite_get_ptr(gs->sprite_components, new) = s;
 
+    int mask = team == PLAYER_TEAM ? FRIENDLY_UNIT : ENEMY_UNIT;
+
     Collider c = {
             .exists=true,
             .rect={
                     .tl={.x=-40, .y=-40},
                     .br={.x=40, .y=40},
             },
-            .mask=FRIENDLY_UNIT,
+            .mask=mask,
             .entity=new
     };
 
@@ -73,12 +75,18 @@ void create_unit(GameState* gs, Vec2 position, int team) {
             .entity=new,
     };
     *vec_Health_get_ptr(gs->health_components, new) = h;
+
+    return new;
 }
+
+Vector_int units_selected;
 
 void init_units(GameState* gs) {
 
     pure_tint = al_map_rgba_f(1, 1, 1, 1);
     selected_tint = al_map_rgba_f(0.3, 1, 0.3, 1);
+
+    units_selected = vec_int_with_capacity(64);
 
     // ECS land below
     create_unit(gs, vec2_make(100, 100), 0);
@@ -139,7 +147,7 @@ int target_unit(GameState* gs, int targeting, Vector_int targetables) {
 
 void advance_units(GameState *gs) {
     // prepare vector of targetable entities:
-    Vector_int targetables = vec_int_new();
+    Vector_int targetables = vec_int_with_capacity(128);
     for (int i = 0; i < VEC_LEN(gs->entities); ++i) {
         Transform t = vec_Transform_get(gs->transform_components, i);
         if(!t.exists) continue;
@@ -227,7 +235,7 @@ void command_units(GameState *gs) {
         Vec2 mean_position = vec2_make(0, 0);
         int unit_count = 0;
 
-        Vector_int units_selected = vec_int_new();
+        vec_int_clear(units_selected);
 
 
         for (int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
@@ -318,7 +326,6 @@ void command_units(GameState *gs) {
                 ue->sm.move.dest = vec2_sub(gs->resources.mouse_position, offset);
             }
         }
-        vec_int_destroy(units_selected);
         vec_Vec2_destroy(offsets);
     }
 }

@@ -32,7 +32,9 @@ Vector* vec_with_capacity(size_t type_size, size_t capacity) {
 void vec_push(Vector* vec, void* item) {
     if(vec->length + 1 > vec->capacity) {
         vec->buf = realloc(vec->buf, vec->type_size * vec->capacity * 2);
+        printf("Reallocation on push from %d", vec->capacity);
         vec->capacity *= 2;
+        printf(" to %d\n", vec->capacity);
         assert(vec->buf != NULL);
     }
     memcpy(vec->buf + vec->type_size * vec->length, item, vec->type_size);
@@ -43,6 +45,7 @@ void vec_push_zero(Vector* vec) {
     if(vec->length + 1 > vec->capacity) {
         vec->buf = realloc(vec->buf, vec->type_size * vec->capacity * 2);
         vec->capacity *= 2;
+        printf("Reallocation on zero push\n");
         assert(vec->buf != NULL);
     }
     memset(vec->buf + vec->type_size * vec->length, 0, vec->type_size);

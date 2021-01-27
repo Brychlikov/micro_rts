@@ -16,6 +16,8 @@ void init_colliders(GameState* gs) {
     gs->resources.collisions.vec = vec_CollisionData_new();
     gs->collider_components = vec_Collider_new();
     gs->resources.collisions.masks[FRIENDLY_UNIT_BIT] = ENEMY_BULLET | ENEMY_BUILDING;
+    gs->resources.collisions.masks[ENEMY_UNIT_BIT] = FRIENDLY_BULLET | FRIENDLY_BULLET;
+    gs->resources.collisions.masks[FRIENDLY_BUILDING_BIT] = ENEMY_UNIT | ENEMY_BULLET;
     gs->resources.collisions.masks[ENEMY_BUILDING_BIT] = FRIENDLY_UNIT | FRIENDLY_BULLET;
 }
 

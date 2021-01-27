@@ -53,6 +53,10 @@ typedef struct GameState{
             ALLEGRO_BITMAP* building;
             ALLEGRO_BITMAP* bullet;
         } sprites;
+
+        struct {
+            struct timespec last_unit_spawn_timestamp;
+        } enemy;
     } resources;
 
     // todo

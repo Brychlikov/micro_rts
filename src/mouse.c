@@ -18,7 +18,6 @@ void update_mouse (GameState * gs, ALLEGRO_EVENT event) {
             gs->resources.mouse_position.y = (float)event.mouse.y;
             break;
         case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-            printf("setting mouse %d\n", event.mouse.button);
             gs->resources.mouse_buttons[event.mouse.button] = MOUSE_KEY_UNPROCESSED | MOUSE_KEY_HELD;
             break;
         case ALLEGRO_EVENT_MOUSE_BUTTON_UP:

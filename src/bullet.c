@@ -64,7 +64,7 @@ void process_bullets(GameState* gs) {
                 .rotation=0,
                 .scale=1,
         };
-        printf("making a bullet\n");
+//        printf("making a bullet\n");
         create_bullet(gs, new_t, PLAYER_TEAM);
     }
     for (int i = 0; i < VEC_LEN(gs->entities); ++i) {
@@ -90,7 +90,7 @@ void process_bullets(GameState* gs) {
             if(h->exists && h->team != bc.team) {
                 // we have a valid target
                 h->points -= bc.damage;
-                printf("damage dealt. hp remaining: %d", h->points);
+//                printf("damage dealt. hp remaining: %d", h->points);
                 destroy_entity(gs, i);
                 return;
             }

@@ -13,6 +13,7 @@
 #include "sprite.h"
 #include "collider.h"
 #include "building.h"
+#include "enemy.h"
 
 #define FUNARR_LEN(arr) (sizeof(arr)/sizeof(size_t))
 
@@ -24,6 +25,7 @@ void misc_allegro_init(GameState* gs) {
     al_init();
     al_init_primitives_addon();
     al_init_image_addon();
+    al_hold_bitmap_drawing(true);
 
     gs->timer = al_create_timer(1.0 / 60.0);
     gs->queue = al_create_event_queue();
@@ -100,10 +102,11 @@ PURE_SYSTEM redraw_fns[] = {
         selection_system,
         draw_selection_area,
         check_collisions,
-        print_collisions,
+//        print_collisions,
         advance_units,
         process_bullets,
         health_system,
+        process_enemy,
 
 #ifdef DEBUG_COLLIDERS
         draw_colliders,

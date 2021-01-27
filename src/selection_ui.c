@@ -17,10 +17,6 @@
 
 void init_selection_system(GameState* gs) {
     gs->resources.selection.entities_selected = vec_int_new();
-    printf("Selection init'ed at  %lx, buffer at %x with size %d\n",
-           gs->resources.selection.entities_selected.inner,
-           gs->resources.selection.entities_selected.inner->buf,
-           gs->resources.selection.entities_selected.inner->type_size);
 }
 
 void draw_selection_area(GameState* gs) {
@@ -32,7 +28,7 @@ void draw_selection_area(GameState* gs) {
 void selection_system(GameState* gs) {
     if(gs->resources.mouse_buttons[LEFT_MOUSE_BUTTON] & MOUSE_KEY_UNPROCESSED) {
         gs->resources.selection.in_progress = true;
-        printf("beginning selection\n");
+//        printf("beginning selection\n");
         gs->resources.selection.area.tl = gs->resources.mouse_position;
     }
 
@@ -51,12 +47,16 @@ void selection_system(GameState* gs) {
 
         vec_int_clear(gs->resources.selection.entities_selected);
 
-        printf("querying for collisions\n");
+//        printf("querying for collisions\n");
         for (size_t i = 0; i < VEC_LEN(gs->entities); ++i) {
             if(!vec_bool_get(gs->entities, i)) continue;
 
             Collider c = vec_Collider_get(gs->collider_components, i);
             if(!c.exists) continue;
+
+            // only entities having health and controlled by player should be selectable
+            Health h = vec_Health_get(gs->health_components, i);
+            if(!h.exists || h.team != PLAYER_TEAM) continue;
 
             // if entity has a transform, rect is in local coord space
             // and needs to be transformed to global space
@@ -77,7 +77,7 @@ void selection_system(GameState* gs) {
         }
         for(int i=0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
             size_t index = vec_int_get(gs->resources.selection.entities_selected, i);
-            printf("Entity selected: %ld\n", index);
+//            printf("Entity selected: %ld\n", index);
         }
     }
 
