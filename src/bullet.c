@@ -8,6 +8,7 @@
 GENERATE_VECTOR_DEFINITION(BulletComponent)
 
 #define BULLET_DAMAGE 10
+#define BULLET_SPEED 200
 
 void init_bullets(GameState* gs) {
     gs->bullet_components = vec_BulletComponent_new();
@@ -74,7 +75,7 @@ void process_bullets(GameState* gs) {
 
         //movement
         Transform* t = vec_Transform_get_ptr(gs->transform_components, i);
-        Vec2 delta = vec2_scale(vec2_unit_from_radius(t->rotation), BULLET_SPEED);
+        Vec2 delta = vec2_scale(vec2_unit_from_radius(t->rotation), BULLET_SPEED * gs->resources.time_delta);
         t->position = vec2_add(t->position, delta);
 
         // delete bullet if outside of playable zone

@@ -12,8 +12,6 @@
 #include "health.h"
 #include "sprite.h"
 
-#define BULLET_SPEED 5
-
 void init_bullets(GameState* gs);
 
 void create_bullet(GameState* gs, Transform t, int team);

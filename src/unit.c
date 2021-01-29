@@ -8,7 +8,7 @@
 #include "collider.h"
 #include <math.h>
 
-#define UNIT_SPEED 5
+#define UNIT_SPEED 150
 #define PI 3.14159265
 #define GROUPING_ITERATIONS 10
 #define GROUPING_STEP 5
@@ -185,12 +185,14 @@ void advance_units(GameState *gs) {
                 ;     // I hate this language sooooo much
                 Vec2 diff = vec2_sub(unit->sm.move.dest, my_transform->position);
                 Vec2 delta;
-                if(vec2_length(diff) <= UNIT_SPEED) {
+                float distance = gs->resources.time_delta * UNIT_SPEED;
+                //TODO make it adhere to time deltas
+                if(vec2_length(diff) <= distance) {
                     delta = vec2_sub(unit->sm.move.dest, my_transform->position);
                 }
                 else {
                     Vec2 dir = vec2_norm(diff);
-                    delta = vec2_scale(dir, UNIT_SPEED);
+                    delta = vec2_scale(dir, distance);
                 }
                 float angle = atan2f(delta.y, delta.x);
                 my_transform->position = vec2_add(my_transform->position, delta);

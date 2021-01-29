@@ -37,6 +37,9 @@ typedef struct GameState{
 
         Vec2 mouse_position;
 
+        float time_delta;
+        struct timespec last_frame_timestamp;
+
         struct {
             bool in_progress;
             Rect area;

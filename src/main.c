@@ -59,6 +59,14 @@ void should_redraw(GameState* gs, ALLEGRO_EVENT event) {
 
 void prep_redraw(GameState* gs) {
     gs->redraw = false;
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC_RAW, &now);
+
+    long usecs_elapsed = (now.tv_sec - gs->resources.last_frame_timestamp.tv_sec) * 1000000 + \
+        (now.tv_nsec - gs->resources.last_frame_timestamp.tv_nsec) / 1000;
+
+    gs->resources.time_delta = (float)usecs_elapsed / 1000000;
+    gs->resources.last_frame_timestamp = now;
     al_clear_to_color(al_map_rgb(50, 50, 80));
 }
 
