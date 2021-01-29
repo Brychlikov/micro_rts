@@ -16,6 +16,7 @@
 #define ATTRACT_MULTIPLIER 50.0
 
 #define UNIT_ATTACK_RANGE 400
+#define UNIT_ATTACK_FOLLOW_RANGE 500
 #define UNIT_HP 100
 
 GENERATE_VECTOR_DEFINITION(UnitComponent)
@@ -200,7 +201,14 @@ void advance_units(GameState *gs) {
                 break;
             case AGGRESSIVE:
                 ;
-                if(!vec_bool_get(gs->entities, unit->sm.aggressive.target)) { // if target is dead
+                // turn unit to face the enemy:
+                Transform target_transform = vec_Transform_get(gs->transform_components, unit->sm.aggressive.target);
+                Vec2 to_enemy = vec2_sub(target_transform.position, my_transform->position);
+
+                bool target_dead = !vec_bool_get(gs->entities, unit->sm.aggressive.target);
+                bool target_too_far = vec2_length(to_enemy) > UNIT_ATTACK_FOLLOW_RANGE;
+
+                if(target_dead || target_too_far) { // if target is dead
                     unit->sm.state = unit->sm.aggressive.next;
 
                     // once again depending on same layout of move and a-move
@@ -208,10 +216,7 @@ void advance_units(GameState *gs) {
                     break;
                 }
 
-                // turn unit to face the enemy:
-                Transform target_transform = vec_Transform_get(gs->transform_components, unit->sm.aggressive.target);
                 assert(target_transform.exists);
-                Vec2 to_enemy = vec2_sub(target_transform.position, my_transform->position);
                 angle = atan2f(to_enemy.y, to_enemy.x);
                 my_transform->rotation = angle;
 
@@ -224,8 +229,14 @@ void advance_units(GameState *gs) {
                 break;
             case IDLE:
                 break;
-            default:
-                break;
+            case WATCH:
+                target = target_unit(gs, i, targetables);
+                if(target != -1) {
+                    unit->sm.state = AGGRESSIVE;
+                    unit->sm.aggressive.target = target;
+                    unit->sm.aggressive.next = WATCH;
+                    break;
+                }
         }
 
 

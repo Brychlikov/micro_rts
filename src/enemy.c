@@ -8,9 +8,10 @@
 #include "gamestate.h"
 
 #define UNIT_COOLDOWN 2
+#define SIEGE_CAP 10
 
 void init_enemy(GameState* gs) {
-
+    gs->resources.enemy.units = vec_int_new();
 }
 
 Vec2 random_offset() {
@@ -30,8 +31,20 @@ void process_enemy(GameState* gs) {
         int new_unit = create_unit(gs, spawn_point, ENEMY_TEAM);
 
         UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, new_unit);
-        uc->sm.state = A_MOVE;
-        uc->sm.a_move.dest = vec2_make(100, 900);
+        uc->sm.state = WATCH;
+        vec_int_push(gs->resources.enemy.units, new_unit);
+
+    }
+
+    if(VEC_LEN(gs->resources.enemy.units) >= SIEGE_CAP){
+        for (int i = 0; i < VEC_LEN(gs->resources.enemy.units); ++i) {
+            int entity = vec_int_get(gs->resources.enemy.units, i);
+            UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
+            uc->sm.state = A_MOVE;
+            uc->sm.a_move.dest = vec2_make(100, 600);
+        }
+
+        vec_int_clear(gs->resources.enemy.units);
     }
 }
 

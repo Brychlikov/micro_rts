@@ -96,6 +96,7 @@ PURE_SYSTEM init_fns[] = {
         init_sprites,
         init_bullets,
         init_units,
+        init_enemy,
 };
 
 EVENT_SYSTEM event_fns[] = {

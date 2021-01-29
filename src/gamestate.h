@@ -59,6 +59,7 @@ typedef struct GameState{
 
         struct {
             struct timespec last_unit_spawn_timestamp;
+            Vector_int units;
         } enemy;
     } resources;
 
