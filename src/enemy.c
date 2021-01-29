@@ -25,8 +25,8 @@ void process_enemy(GameState* gs) {
     struct timespec now;
     clock_gettime(CLOCK_MONOTONIC_RAW, &now);
 
-    if(now.tv_sec - UNIT_COOLDOWN >= gs->resources.enemy.last_unit_spawn_timestamp.tv_sec) {
-        gs->resources.enemy.last_unit_spawn_timestamp = now;
+    if(gs->resources.game.enemy_balance >= UNIT_COST) {
+        gs->resources.game.enemy_balance -= UNIT_COST;
 
         int new_unit = create_unit(gs, spawn_point, ENEMY_TEAM);
 

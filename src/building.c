@@ -12,7 +12,7 @@
 #define BUILDING_MAX_HP 1000
 
 
-void create_building(GameState* gs, Vec2 position, int team) {
+int create_building(GameState* gs, Vec2 position, int team) {
     int new = create_entity(gs);
 
     Transform t = {
@@ -56,4 +56,5 @@ void create_building(GameState* gs, Vec2 position, int team) {
     };
 
     *vec_Collider_get_ptr(gs->collider_components, new) = c;
+    return new;
 }

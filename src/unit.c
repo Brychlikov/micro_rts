@@ -7,6 +7,7 @@
 #include "sprite.h"
 #include "collider.h"
 #include <math.h>
+#include "keyboard.h"
 
 #define UNIT_SPEED 150
 #define PI 3.14159265
@@ -32,7 +33,7 @@ int create_unit(GameState *gs, Vec2 position, int team) {
             .exists=true,
             .position=position,
             .rotation=1,
-            .scale=1,
+            .scale=0.3,
             .entity=new
     };
     *vec_Transform_get_ptr(gs->transform_components, new) = t;
@@ -341,6 +342,26 @@ void command_units(GameState *gs) {
             }
         }
         vec_Vec2_destroy(offsets);
+    }
+}
+
+// copy pasted from enemy.c :/
+Vec2 random_offset2() {
+    int x = (rand() % 150) - 75;
+    int y = (rand() % 150) - 75;
+    return vec2_make((float)x, (float)y);
+}
+
+void buy_units(GameState* gs) {
+    if(gs->resources.keys[ALLEGRO_KEY_Q] & KEY_UNPROCESSED) {
+        if(gs->resources.game.player_balance < UNIT_COST) return;
+        Transform t = vec_Transform_get(gs->transform_components, gs->resources.game.player_base);
+        Vec2 spawn_point = vec2_add(t.position, vec2_make(100, -100));
+        spawn_point = vec2_add(spawn_point, random_offset2());
+
+        gs->resources.game.player_balance -= UNIT_COST;
+        printf("player balance: %f\n", gs->resources.game.player_balance);
+        create_unit(gs, spawn_point, PLAYER_TEAM);
     }
 }
 

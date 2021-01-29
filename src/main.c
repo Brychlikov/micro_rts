@@ -65,7 +65,12 @@ void prep_redraw(GameState* gs) {
     long usecs_elapsed = (now.tv_sec - gs->resources.last_frame_timestamp.tv_sec) * 1000000 + \
         (now.tv_nsec - gs->resources.last_frame_timestamp.tv_nsec) / 1000;
 
-    gs->resources.time_delta = (float)usecs_elapsed / 1000000;
+    if(gs->resources.last_frame_timestamp.tv_sec == 0) {  // first frame of the game
+        gs->resources.time_delta = 1.0/60;
+    }
+    else {
+        gs->resources.time_delta = (float)usecs_elapsed / 1000000;
+    }
     gs->resources.last_frame_timestamp = now;
     al_clear_to_color(al_map_rgb(50, 50, 80));
 }
@@ -97,6 +102,7 @@ PURE_SYSTEM init_fns[] = {
         init_bullets,
         init_units,
         init_enemy,
+        init_game,
 };
 
 EVENT_SYSTEM event_fns[] = {
@@ -116,6 +122,8 @@ PURE_SYSTEM redraw_fns[] = {
         process_bullets,
         health_system,
         process_enemy,
+        process_income,
+        buy_units,
 
 #ifdef DEBUG_COLLIDERS
         draw_colliders,
@@ -123,6 +131,7 @@ PURE_SYSTEM redraw_fns[] = {
 //        draw_units,
         draw_sprites,
         command_units,
+        render_balance,
 
         reset_keys, // these should always be last
         reset_mouse_buttons,
@@ -147,8 +156,6 @@ int main()
     }
 
     gs.redraw = true;
-
-    create_building(&gs, vec2_make(800, 100), 1);
 
     ALLEGRO_EVENT event;
 

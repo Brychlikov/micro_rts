@@ -3,6 +3,10 @@
 //
 
 #include "gamestate.h"
+#include "building.h"
+
+#define PLAYER_BASE_INCOME 10
+#define ENEMY_BASE_INCOME 45
 
 void init_components(GameState *gs) {
     gs->entities = vec_bool_new();
@@ -10,6 +14,33 @@ void init_components(GameState *gs) {
     gs->transform_components = vec_Transform_new();
     gs->collider_components = vec_Collider_new();
     gs->unit_components = vec_UnitComponent_new();
+}
+
+void init_game(GameState* gs) {
+
+    int enemy_building = create_building(gs, vec2_make(1180, 100), ENEMY_TEAM);
+    int player_building = create_building(gs, vec2_make(100, 620), PLAYER_TEAM);
+
+    gs->resources.game.enemy_base = enemy_building;
+    gs->resources.game.player_base = player_building;
+
+    gs->resources.game.player_income = PLAYER_BASE_INCOME;
+    gs->resources.game.enemy_income = ENEMY_BASE_INCOME;
+
+    gs->resources.game.player_balance = 0;
+    gs->resources.game.enemy_balance = 0;
+}
+
+void process_income(GameState *gs) {
+    gs->resources.game.player_balance += gs->resources.time_delta * gs->resources.game.player_income;
+    gs->resources.game.enemy_balance += gs->resources.time_delta * gs->resources.game.enemy_income;
+}
+
+void render_balance(GameState *gs) {
+    int balance = (int)gs->resources.game.player_balance;
+    float income = gs->resources.game.player_income;
+    al_draw_textf(gs->font, al_map_rgb_f(1, 1, 1), 25, 25, 0, "Balance: %d", balance);
+    al_draw_textf(gs->font, al_map_rgb_f(1, 1, 1), 25, 50, 0, "+%.1f", income);
 }
 
 int create_entity(GameState* gs) {

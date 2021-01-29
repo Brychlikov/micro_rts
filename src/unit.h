@@ -13,6 +13,7 @@
 #include <time.h>
 #include "gamestate_forward.h"
 
+#define UNIT_COST 100
 extern ALLEGRO_COLOR pure_tint;
 extern ALLEGRO_COLOR selected_tint;
 
@@ -63,6 +64,8 @@ int create_unit(GameState* gs, Vec2 position, int team);
 void command_units(GameState* gs);
 
 void advance_units(GameState* gs);
+
+void buy_units(GameState* gs);
 
 
 #endif //_RTS_UNIT_H

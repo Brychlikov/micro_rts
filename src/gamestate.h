@@ -61,6 +61,18 @@ typedef struct GameState{
             struct timespec last_unit_spawn_timestamp;
             Vector_int units;
         } enemy;
+
+        struct {
+            int player_base;
+            int enemy_base;
+            int victory_state;
+
+            float player_income;
+            float enemy_income;
+
+            float player_balance;
+            float enemy_balance;
+        } game;
     } resources;
 
     // todo
@@ -80,8 +92,14 @@ typedef struct GameState{
 
 void init_components(GameState* gs);
 
+void init_game(GameState* gs);
+
 int create_entity(GameState* gs);
 
 void destroy_entity(GameState* gs, Entity entity);
+
+void process_income(GameState* gs);
+
+void render_balance(GameState* gs);
 
 #endif //_RTS_GAMESTATE_H
