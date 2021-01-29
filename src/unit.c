@@ -32,7 +32,7 @@ int create_unit(GameState *gs, Vec2 position, int team) {
             .exists=true,
             .position=position,
             .rotation=1,
-            .scale=0.4,
+            .scale=0.2,
             .entity=new
     };
     *vec_Transform_get_ptr(gs->transform_components, new) = t;
@@ -270,10 +270,11 @@ void command_units(GameState *gs) {
         int center_unit;
         float closest_dist = INFINITY;
         for (int i = 0; i < VEC_LEN(units_selected); ++i) {
-            Transform t = vec_Transform_get(gs->transform_components, i);
+            int entity = vec_int_get(units_selected, i);
+            Transform t = vec_Transform_get(gs->transform_components, entity);
             if(vec2_length(vec2_sub(mean_position, t.position)) < closest_dist) {
                 closest_dist = vec2_length(vec2_sub(mean_position, t.position));
-                center_unit = i;
+                center_unit = entity;
             }
         }
 
