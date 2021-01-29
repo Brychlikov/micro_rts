@@ -32,7 +32,7 @@ int create_unit(GameState *gs, Vec2 position, int team) {
             .exists=true,
             .position=position,
             .rotation=1,
-            .scale=0.2,
+            .scale=1,
             .entity=new
     };
     *vec_Transform_get_ptr(gs->transform_components, new) = t;
@@ -51,8 +51,8 @@ int create_unit(GameState *gs, Vec2 position, int team) {
     Collider c = {
             .exists=true,
             .rect={
-                    .tl={.x=-40, .y=-40},
-                    .br={.x=40, .y=40},
+                    .tl={.x=-35, .y=-40},
+                    .br={.x=30, .y=40},
             },
             .mask=mask,
             .entity=new

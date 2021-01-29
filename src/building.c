@@ -48,8 +48,8 @@ void create_building(GameState* gs, Vec2 position, int team) {
     Collider c = {
             .exists=true,
             .rect={
-                    .tl={.x=-50, .y=-50},
-                    .br={.x=50, .y=50},
+                    .tl={.x=-45, .y=-45},
+                    .br={.x=45, .y=45},
             },
             .mask=ENEMY_BUILDING,
             .entity=new,
