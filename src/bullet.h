@@ -22,6 +22,7 @@ typedef struct {
     bool exists;
     int team;
     int damage;
+    float time_remaining;
     int entity;
 } BulletComponent;
 

@@ -9,6 +9,7 @@ GENERATE_VECTOR_DEFINITION(BulletComponent)
 
 #define BULLET_DAMAGE 10
 #define BULLET_SPEED 200
+#define BULLET_LIFE 2.5
 
 void init_bullets(GameState* gs) {
     gs->bullet_components = vec_BulletComponent_new();
@@ -27,6 +28,7 @@ void create_bullet(GameState* gs, Transform t, int team) {
             .exists=true,
             .team=team,
             .damage=BULLET_DAMAGE,
+            .time_remaining=BULLET_LIFE,
             .entity=new,
     };
 
@@ -58,16 +60,6 @@ void create_bullet(GameState* gs, Transform t, int team) {
 }
 
 void process_bullets(GameState* gs) {
-    if(gs->resources.mouse_buttons[MIDDLE_MOUSE_BUTTON] & MOUSE_KEY_UNPROCESSED) {
-        Transform new_t = {
-                .exists=true,
-                .position=gs->resources.mouse_position,
-                .rotation=0,
-                .scale=1,
-        };
-//        printf("making a bullet\n");
-        create_bullet(gs, new_t, PLAYER_TEAM);
-    }
     for (int i = 0; i < VEC_LEN(gs->entities); ++i) {
         BulletComponent bc = vec_BulletComponent_get(gs->bullet_components, i);
         bool alive = vec_bool_get(gs->entities, i);
@@ -78,10 +70,18 @@ void process_bullets(GameState* gs) {
         Vec2 delta = vec2_scale(vec2_unit_from_radius(t->rotation), BULLET_SPEED * gs->resources.time_delta);
         t->position = vec2_add(t->position, delta);
 
+        //update bullet lifetime
+        BulletComponent *bc_ptr = vec_BulletComponent_get_ptr(gs->bullet_components, i);
+        bc_ptr->time_remaining -= gs->resources.time_delta;
+        if(bc_ptr->time_remaining < 0) {
+            destroy_entity(gs, i);
+            continue;
+        }
+
         // delete bullet if outside of playable zone
         if(t->position.x < -100  || t->position.y < -100 || t->position.x > 2000 || t->position.y > 2000) {
             destroy_entity(gs, i);
-            return;
+            continue;
         }
 
         CollisionData* cd = vec_CollisionData_get_ptr(gs->resources.collisions.vec, i);
@@ -93,7 +93,7 @@ void process_bullets(GameState* gs) {
                 h->points -= bc.damage;
 //                printf("damage dealt. hp remaining: %d", h->points);
                 destroy_entity(gs, i);
-                return;
+                break;
             }
             if(h->team == bc.team) {
                 printf("Something went wrong: recorded collision between entities of the same team\n");
