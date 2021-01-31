@@ -63,6 +63,12 @@ typedef struct GameState{
         } enemy;
 
         struct {
+            bool active;
+            int unit;
+            UnitComponent old_uc;
+        } overdrive;
+
+        struct {
             int player_base;
             int enemy_base;
             int victory_state;

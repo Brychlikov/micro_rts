@@ -38,7 +38,7 @@ typedef struct UnitStateMachine {
             int target;
             UnitState next;
             Vec2 next_dest;
-            struct timespec last_shot_timestamp;
+            float shot_cooldown;
         } aggressive;
     };
 } UnitStateMachine;
@@ -66,6 +66,8 @@ void command_units(GameState* gs);
 void advance_units(GameState* gs);
 
 void buy_units(GameState* gs);
+
+void process_overdrive(GameState* gs);
 
 
 #endif //_RTS_UNIT_H

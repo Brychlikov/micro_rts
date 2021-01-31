@@ -9,7 +9,10 @@
 #include <math.h>
 #include "keyboard.h"
 
-#define UNIT_SPEED 150
+#define UNIT_SPEED 50
+#define UNIT_OVERDRIVE_SPEED 150
+#define UNIT_OVERDRIVE_ROTATION_SPEED 4
+#define UNIT_SHOT_COOLDOWN 1.0
 #define PI 3.14159265
 #define GROUPING_ITERATIONS 10
 #define GROUPING_STEP 5
@@ -178,6 +181,7 @@ void advance_units(GameState *gs) {
                     Vec2 prev_dest = unit->sm.a_move.dest;
                     unit->sm.aggressive.target = target;
                     unit->sm.aggressive.next = A_MOVE;
+                    unit->sm.aggressive.shot_cooldown = 0;
                     unit->sm.aggressive.next_dest = prev_dest;
                     break;
                 }
@@ -221,11 +225,11 @@ void advance_units(GameState *gs) {
                 angle = atan2f(to_enemy.y, to_enemy.x);
                 my_transform->rotation = angle;
 
-                struct timespec now;
-                clock_gettime(CLOCK_MONOTONIC_RAW, &now);
-                if(now.tv_sec - 1 >= unit->sm.aggressive.last_shot_timestamp.tv_sec) {
+                unit->sm.aggressive.shot_cooldown -= gs->resources.time_delta;
+                if(unit->sm.aggressive.shot_cooldown < 0) unit->sm.aggressive.shot_cooldown = 0;
+                if(unit->sm.aggressive.shot_cooldown == 0) {
                     create_bullet(gs, *my_transform, my_health.team);
-                    unit->sm.aggressive.last_shot_timestamp = now;
+                    unit->sm.aggressive.shot_cooldown += UNIT_SHOT_COOLDOWN;
                 }
                 break;
             case IDLE:
@@ -235,6 +239,7 @@ void advance_units(GameState *gs) {
                 if(target != -1) {
                     unit->sm.state = AGGRESSIVE;
                     unit->sm.aggressive.target = target;
+                    unit->sm.aggressive.shot_cooldown = 0;
                     unit->sm.aggressive.next = WATCH;
                     break;
                 }
@@ -343,6 +348,78 @@ void command_units(GameState *gs) {
         }
         vec_Vec2_destroy(offsets);
     }
+}
+
+void process_overdrive(GameState *gs) {
+    if(gs->resources.keys[ALLEGRO_KEY_ESCAPE]) {
+        gs->resources.overdrive.active = false;
+        UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, gs->resources.overdrive.unit);
+        uc->exists = true;
+    }
+    if(gs->resources.keys[ALLEGRO_KEY_E]) {
+        if(VEC_LEN(gs->resources.selection.entities_selected) == 1) {
+            int entity_selected = vec_int_get(gs->resources.selection.entities_selected, 0);
+            UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity_selected);
+            if(!uc->exists) {
+                return;
+            }
+            gs->resources.overdrive.active = true;
+            gs->resources.overdrive.unit = entity_selected;
+            uc->exists = false;  // disable Unit AI
+        }
+    }
+    if(!gs->resources.overdrive.active) return;
+    int entity = gs->resources.overdrive.unit;
+    bool alive = vec_bool_get(gs->entities, entity);
+
+    if(!alive) {
+        gs->resources.overdrive.active = false;
+        return;
+    }
+
+    Transform* t = vec_Transform_get_ptr(gs->transform_components, entity);
+
+    Vec2 direction = vec2_make(0, 0);
+
+    if(gs->resources.keys[ALLEGRO_KEY_A]) {  // rotate left
+        direction = vec2_add(direction, vec2_make(-1, 0));
+    }
+    if(gs->resources.keys[ALLEGRO_KEY_D]) {
+        direction = vec2_add(direction, vec2_make(1, 0));
+    }
+
+    if(gs->resources.keys[ALLEGRO_KEY_W]) {
+        direction = vec2_add(direction, vec2_make(0, -1));
+    }
+    if(gs->resources.keys[ALLEGRO_KEY_S]) {
+        direction = vec2_add(direction, vec2_make(0, 1));
+    }
+
+    Vec2 delta;
+    if(direction.x != 0 || direction.y != 0) {
+        direction = vec2_norm(direction);
+        delta = vec2_scale(direction, UNIT_OVERDRIVE_SPEED * gs->resources.time_delta);
+    }
+    else {
+        delta = vec2_make(0, 0);
+    }
+
+    Vec2 to_mouse = vec2_sub(gs->resources.mouse_position, t->position);
+    t->rotation = atan2f(to_mouse.y, to_mouse.x);
+
+    t->position = vec2_add(t->position, delta);
+
+
+    UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
+    uc->sm.aggressive.shot_cooldown -= gs->resources.time_delta;
+    if(uc->sm.aggressive.shot_cooldown < 0) uc->sm.aggressive.shot_cooldown = 0;
+    if(gs->resources.keys[ALLEGRO_KEY_SPACE]) {
+        if(uc->sm.aggressive.shot_cooldown == 0) {
+            create_bullet(gs, *t, PLAYER_TEAM);
+            uc->sm.aggressive.shot_cooldown = UNIT_SHOT_COOLDOWN / 2;
+        }
+    }
+
 }
 
 // copy pasted from enemy.c :/

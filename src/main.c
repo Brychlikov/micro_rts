@@ -124,6 +124,7 @@ PURE_SYSTEM redraw_fns[] = {
         process_enemy,
         process_income,
         buy_units,
+        process_overdrive,
 
 #ifdef DEBUG_COLLIDERS
         draw_colliders,
