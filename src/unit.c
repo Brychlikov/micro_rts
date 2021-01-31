@@ -413,7 +413,7 @@ void process_overdrive(GameState *gs) {
     UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
     uc->sm.aggressive.shot_cooldown -= gs->resources.time_delta;
     if(uc->sm.aggressive.shot_cooldown < 0) uc->sm.aggressive.shot_cooldown = 0;
-    if(gs->resources.keys[ALLEGRO_KEY_SPACE]) {
+    if(gs->resources.mouse_buttons[LEFT_MOUSE_BUTTON]) {
         if(uc->sm.aggressive.shot_cooldown == 0) {
             create_bullet(gs, *t, PLAYER_TEAM);
             uc->sm.aggressive.shot_cooldown = UNIT_SHOT_COOLDOWN / 2;

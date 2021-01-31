@@ -26,6 +26,7 @@ void draw_selection_area(GameState* gs) {
 }
 
 void selection_system(GameState* gs) {
+    if(gs->resources.overdrive.active) return;  // disable in overdrive mode
     if(gs->resources.mouse_buttons[LEFT_MOUSE_BUTTON] & MOUSE_KEY_UNPROCESSED) {
         gs->resources.selection.in_progress = true;
 //        printf("beginning selection\n");
