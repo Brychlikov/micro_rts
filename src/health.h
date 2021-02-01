@@ -22,6 +22,8 @@ GENERATE_VECTOR_DECLARATION(Health)
 
 void init_health(GameState* gs);
 
+void deinit_health(GameState* gs);
+
 void health_system(GameState* gs);
 
 #endif //_RTS_HEALTH_H

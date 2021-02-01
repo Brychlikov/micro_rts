@@ -102,6 +102,8 @@ typedef struct GameState{
 
 void init_components(GameState* gs);
 
+void deinit_components(GameState* gs);
+
 void init_game(GameState* gs);
 
 int create_entity(GameState* gs);

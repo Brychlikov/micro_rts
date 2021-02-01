@@ -11,6 +11,10 @@ void init_health(GameState* gs) {
     gs->health_components = vec_Health_new();
 }
 
+void deinit_health(GameState *gs) {
+    vec_Health_destroy(gs->health_components);
+}
+
 void health_system(GameState* gs) {
     for (int i = 0; i < VEC_LEN(gs->entities); ++i) {
         if(!vec_bool_get(gs->entities, i)) continue;

@@ -35,6 +35,15 @@ void init_sprites(GameState* gs) {
 
 }
 
+void deinit_sprites(GameState *gs) {
+    vec_Sprite_destroy(gs->sprite_components);
+    al_destroy_bitmap(gs->resources.sprites.unit);
+    al_destroy_bitmap(gs->resources.sprites.building);
+    al_destroy_bitmap(gs->resources.sprites.bullet);
+    al_destroy_bitmap(gs->resources.sprites.bullet_turret);
+    al_destroy_bitmap(gs->resources.sprites.laser_turret);
+}
+
 void draw_sprites(GameState* gs) {
     for (int i = 0; i < VEC_LEN(gs->sprite_components); ++i) {
         // for now assert that every entity with sprite has a valid transform

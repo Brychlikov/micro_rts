@@ -14,6 +14,10 @@ void init_enemy(GameState* gs) {
     gs->resources.enemy.units = vec_int_new();
 }
 
+void deinit_enemy(GameState *gs) {
+    vec_int_destroy(gs->resources.enemy.units);
+}
+
 Vec2 random_offset() {
     int x = (rand() % 100) - 50;
     int y = (rand() % 100) - 50;

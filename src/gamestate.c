@@ -12,8 +12,13 @@ void init_components(GameState *gs) {
     gs->entities = vec_bool_new();
 
     gs->transform_components = vec_Transform_new();
-    gs->collider_components = vec_Collider_new();
-    gs->unit_components = vec_UnitComponent_new();
+}
+
+void deinit_components(GameState *gs) {
+    vec_bool_destroy(gs->entities);
+
+    vec_Transform_destroy(gs->transform_components);
+    vec_UnitComponent_destroy(gs->unit_components);
 }
 
 void init_game(GameState* gs) {

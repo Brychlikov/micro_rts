@@ -15,6 +15,10 @@ void init_bullets(GameState* gs) {
     gs->bullet_components = vec_BulletComponent_new();
 }
 
+void deinit_bullets(GameState *gs) {
+    vec_BulletComponent_destroy(gs->bullet_components);
+}
+
 void create_bullet(GameState* gs, Transform t, int team) {
     int new = create_entity(gs);
     t.entity = new;

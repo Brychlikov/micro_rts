@@ -48,6 +48,11 @@ void misc_allegro_deinit(GameState* gs) {
 
 void should_exit(GameState* gs, ALLEGRO_EVENT event) {
     if(event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+        printf("graceful close\n");
+        gs->should_exit = true;
+    }
+    if(event.type == ALLEGRO_EVENT_KEY_DOWN && event.keyboard.keycode == ALLEGRO_KEY_BACKSPACE) {
+        printf("backup graceful close\n");
         gs->should_exit = true;
     }
 }
@@ -142,7 +147,15 @@ PURE_SYSTEM redraw_fns[] = {
 };
 
 PURE_SYSTEM deinit_fns[] = {
-        misc_allegro_deinit
+        misc_allegro_deinit,
+        deinit_colliders,
+        deinit_sprites,
+        deinit_health,
+        deinit_bullets,
+        deinit_enemy,
+        deinit_selection_system,
+        deinit_laser_turrets,
+        deinit_components,
 };
 
 

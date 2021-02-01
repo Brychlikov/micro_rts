@@ -8,6 +8,8 @@
 
 void init_enemy(GameState* gs);
 
+void deinit_enemy(GameState* gs);
+
 void process_enemy(GameState* gs);
 
 #endif //_RTS_ENEMY_H

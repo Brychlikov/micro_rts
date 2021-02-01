@@ -21,6 +21,24 @@ void init_colliders(GameState* gs) {
     gs->resources.collisions.masks[ENEMY_BUILDING_BIT] = FRIENDLY_UNIT | FRIENDLY_BULLET;
 }
 
+void free_collision_data_children(CollisionData* cd) {
+    if(cd->next != NULL) {
+        free_collision_data_children(cd->next);
+    }
+    free(cd->next);
+}
+
+void deinit_colliders(GameState *gs) {
+    vec_Collider_destroy(gs->collider_components);
+
+    //free collision data
+    for (int i = 0; i < VEC_LEN(gs->resources.collisions.vec); ++i) {
+        CollisionData* c_ptr = vec_CollisionData_get_ptr(gs->resources.collisions.vec, i);
+        free_collision_data_children(c_ptr);
+    }
+    vec_CollisionData_destroy(gs->resources.collisions.vec);
+}
+
 bool check_mask(GameState* gs, int mask1, int mask2) {
     for (int i = 0; i < 32; ++i) {
         if(!(mask1 & (1 << i))) continue;
@@ -34,12 +52,6 @@ bool check_mask(GameState* gs, int mask1, int mask2) {
     return false;
 }
 
-void free_collision_data_children(CollisionData* cd) {
-    if(cd->next != NULL) {
-        free_collision_data_children(cd->next);
-    }
-    free(cd->next);
-}
 
 void push_collision(CollisionData* cd, int entity) {
     if(cd->entity == -1) {

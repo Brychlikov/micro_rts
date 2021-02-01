@@ -118,7 +118,7 @@ void process_laser_turrets(GameState *gs) {
 
         if(ltc->shot_cooldown > LASER_TURRET_ATTACK_COOLDOWN / 2) {
             float opacity = ltc->shot_cooldown - LASER_TURRET_ATTACK_COOLDOWN / 2;
-            printf("drawing opacity: %f\n", opacity);
+//            printf("drawing opacity: %f\n", opacity);
             al_draw_line(turret_transform.position.x,
                          turret_transform.position.y,
                          ltc->target_position.x,
@@ -129,4 +129,8 @@ void process_laser_turrets(GameState *gs) {
         }
     }
     vec_int_destroy(targetables);
+}
+
+void deinit_laser_turrets(GameState *gs) {
+    vec_LaserTurretComponent_destroy(gs->laser_turret_components);
 }

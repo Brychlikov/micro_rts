@@ -24,4 +24,7 @@ int create_laser_turret(GameState* gs, Vec2 position, int team);
 
 void process_laser_turrets(GameState* gs);
 
+void deinit_laser_turrets(GameState* gs);
+
+
 #endif //_RTS_LASER_TURRET_H

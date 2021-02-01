@@ -19,6 +19,10 @@ void init_selection_system(GameState* gs) {
     gs->resources.selection.entities_selected = vec_int_new();
 }
 
+void deinit_selection_system(GameState *gs) {
+    vec_int_destroy(gs->resources.selection.entities_selected);
+}
+
 void draw_selection_area(GameState* gs) {
     Rect sa = gs->resources.selection.area;
     if(gs->resources.selection.in_progress)

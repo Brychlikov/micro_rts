@@ -91,6 +91,7 @@ void init_units(GameState* gs) {
     pure_tint = al_map_rgba_f(1, 1, 1, 1);
     selected_tint = al_map_rgba_f(0.3, 1, 0.3, 1);
 
+    gs->unit_components = vec_UnitComponent_new();
     units_selected = vec_int_with_capacity(64);
 
     // ECS land below
@@ -103,6 +104,10 @@ void init_units(GameState* gs) {
     create_unit(gs, vec2_make(100, 300), 0);
     create_unit(gs, vec2_make(200, 300), 0);
     create_unit(gs, vec2_make(300, 300), 0);
+}
+
+void deinit_units(GameState* gs) {
+    vec_UnitComponent_destroy(gs->unit_components);
 }
 
 //void draw_units(GameState *gs) {

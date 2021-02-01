@@ -41,6 +41,8 @@ GENERATE_VECTOR_DECLARATION(CollisionData)
 
 void init_colliders(GameState* gs);
 
+void deinit_colliders(GameState* gs);
+
 void check_collisions(GameState* gs);
 
 void draw_colliders(GameState* gs);

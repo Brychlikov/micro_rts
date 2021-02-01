@@ -25,4 +25,7 @@ void draw_sprites(GameState* gs) ;
 
 void init_sprites(GameState* gs) ;
 
+void deinit_sprites(GameState* gs);
+
+
 #endif //_RTS_SPRITE_H
