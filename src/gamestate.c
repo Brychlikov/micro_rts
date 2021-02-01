@@ -29,6 +29,8 @@ void init_game(GameState* gs) {
 
     gs->resources.game.player_balance = 0;
     gs->resources.game.enemy_balance = 0;
+
+    create_laser_turret(gs, vec2_make(1100, 300), ENEMY_TEAM);
 }
 
 void process_income(GameState *gs) {
@@ -54,6 +56,7 @@ int create_entity(GameState* gs) {
     vec_Collider_push_zero(gs->collider_components);
     vec_Health_push_zero(gs->health_components);
     vec_BulletComponent_push_zero(gs->bullet_components);
+    vec_LaserTurretComponent_push_zero(gs->laser_turret_components);
 
     // add empty CollisionData element too
     CollisionData cd = {.entity=-1, .next=NULL};

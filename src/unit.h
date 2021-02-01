@@ -69,5 +69,7 @@ void buy_units(GameState* gs);
 
 void process_overdrive(GameState* gs);
 
+int target_unit(GameState* gs, int targeting, Vector_int targetables, float max_range);
+
 
 #endif //_RTS_UNIT_H

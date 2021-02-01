@@ -13,6 +13,7 @@
 #include "sprite.h"
 #include "collider.h"
 #include "building.h"
+#include "laser_turret.h"
 #include "enemy.h"
 
 #define FUNARR_LEN(arr) (sizeof(arr)/sizeof(size_t))
@@ -72,7 +73,7 @@ void prep_redraw(GameState* gs) {
         gs->resources.time_delta = (float)usecs_elapsed / 1000000;
     }
     gs->resources.last_frame_timestamp = now;
-    al_clear_to_color(al_map_rgb(50, 50, 80));
+    al_clear_to_color(al_map_rgba(0, 0, 0, 255));
 }
 
 void print_collisions(GameState* gs) {
@@ -100,6 +101,7 @@ PURE_SYSTEM init_fns[] = {
         init_health,
         init_sprites,
         init_bullets,
+        init_laser_turrets,
         init_units,
         init_enemy,
         init_game,
@@ -119,6 +121,7 @@ PURE_SYSTEM redraw_fns[] = {
         check_collisions,
 //        print_collisions,
         advance_units,
+        process_laser_turrets,
         process_bullets,
         health_system,
         process_enemy,

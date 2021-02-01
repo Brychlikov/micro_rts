@@ -45,13 +45,14 @@ int create_building(GameState* gs, Vec2 position, int team) {
 
     *vec_Health_get_ptr(gs->health_components, new) = h;
 
+    int mask = team == PLAYER_TEAM ? FRIENDLY_BUILDING : ENEMY_BUILDING;
     Collider c = {
             .exists=true,
             .rect={
                     .tl={.x=-45, .y=-45},
                     .br={.x=45, .y=45},
             },
-            .mask=ENEMY_BUILDING,
+            .mask=mask,
             .entity=new,
     };
 

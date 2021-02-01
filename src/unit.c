@@ -9,7 +9,7 @@
 #include <math.h>
 #include "keyboard.h"
 
-#define UNIT_SPEED 50
+#define UNIT_SPEED 100
 #define UNIT_OVERDRIVE_SPEED 150
 #define UNIT_OVERDRIVE_ROTATION_SPEED 4
 #define UNIT_SHOT_COOLDOWN 1.0
@@ -123,7 +123,7 @@ void init_units(GameState* gs) {
 //    }
 //}
 
-int target_unit(GameState* gs, int targeting, Vector_int targetables) {
+int target_unit(GameState *gs, int targeting, Vector_int targetables, float max_range) {
     // targetables - vector of entities having Health and Transform components
 
     // returns the closest targetable unit in range, -1 otherwise
@@ -141,7 +141,7 @@ int target_unit(GameState* gs, int targeting, Vector_int targetables) {
         assert(h.exists);
 
         float dist = vec2_length(vec2_sub(t.position, targeting_transform.position));
-        if(dist <= UNIT_ATTACK_RANGE && dist < closest_distance && h.team != targeting_health.team) {
+        if(dist <= max_range && dist < closest_distance && h.team != targeting_health.team) {
             result = entity;
             closest_distance = dist;
         }
@@ -175,8 +175,10 @@ void advance_units(GameState *gs) {
         switch(unit->sm.state) {
             case A_MOVE:
                 ;
-                int target = target_unit(gs, i, targetables);
+                int target = target_unit(gs, i, targetables, UNIT_ATTACK_RANGE);
                 if(target != -1) {
+                    assert(vec_Health_get(gs->health_components, target).team != my_health.team);
+//                    printf("Unit %d of team %d targeting entity %d of team %d\n", i, my_health.team, target, vec_Health_get(gs->health_components, target).team);
                     unit->sm.state = AGGRESSIVE;
                     Vec2 prev_dest = unit->sm.a_move.dest;
                     unit->sm.aggressive.target = target;
@@ -229,13 +231,15 @@ void advance_units(GameState *gs) {
                 if(unit->sm.aggressive.shot_cooldown < 0) unit->sm.aggressive.shot_cooldown = 0;
                 if(unit->sm.aggressive.shot_cooldown == 0) {
                     create_bullet(gs, *my_transform, my_health.team);
+                    // create_bullet can cause a realloc, invalidating unit pointer
+                    unit = vec_UnitComponent_get_ptr(gs->unit_components, i);
                     unit->sm.aggressive.shot_cooldown += UNIT_SHOT_COOLDOWN;
                 }
                 break;
             case IDLE:
                 break;
             case WATCH:
-                target = target_unit(gs, i, targetables);
+                target = target_unit(gs, i, targetables, UNIT_ATTACK_RANGE);
                 if(target != -1) {
                     unit->sm.state = AGGRESSIVE;
                     unit->sm.aggressive.target = target;
@@ -247,6 +251,7 @@ void advance_units(GameState *gs) {
 
 
     }
+    vec_int_destroy(targetables);
 }
 
 void command_units(GameState *gs) {
@@ -416,6 +421,8 @@ void process_overdrive(GameState *gs) {
     if(gs->resources.mouse_buttons[LEFT_MOUSE_BUTTON]) {
         if(uc->sm.aggressive.shot_cooldown == 0) {
             create_bullet(gs, *t, PLAYER_TEAM);
+            // create_bullet can cause a realloc, invalidating uc pointer
+            uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
             uc->sm.aggressive.shot_cooldown = UNIT_SHOT_COOLDOWN / 2;
         }
     }

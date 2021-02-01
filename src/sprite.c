@@ -22,6 +22,17 @@ void init_sprites(GameState* gs) {
     if(gs->resources.sprites.bullet == NULL) {
         fprintf(stderr, "Could not load bullet sprite\n");
     }
+
+    gs->resources.sprites.bullet_turret = al_load_bitmap("assets/bullet_turret.png");
+    if(gs->resources.sprites.bullet_turret == NULL) {
+        fprintf(stderr, "Could not load bullet turret sprite\n");
+    }
+
+    gs->resources.sprites.laser_turret = al_load_bitmap("assets/laser_turret.png");
+    if(gs->resources.sprites.laser_turret == NULL) {
+        fprintf(stderr, "Could not load laser turret sprite\n");
+    }
+
 }
 
 void draw_sprites(GameState* gs) {
