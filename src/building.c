@@ -9,17 +9,16 @@
 #include "health.h"
 #include "coord_utils.h"
 
-#define BUILDING_MAX_HP 1000
 
 
-int create_building(GameState* gs, Vec2 position, int team) {
+int create_building(GameState* gs, Vec2 position, float scale, int max_hp, int team) {
     int new = create_entity(gs);
 
     Transform t = {
             .exists=true,
             .position=position,
             .rotation=0,
-            .scale=1,
+            .scale=scale,
             .entity=new,
     };
 
@@ -38,7 +37,7 @@ int create_building(GameState* gs, Vec2 position, int team) {
 
     Health h = {
             .exists=true,
-            .points=BUILDING_MAX_HP,
+            .points=max_hp,
             .team=team,
             .entity=new,
     };

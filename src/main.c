@@ -148,6 +148,7 @@ PURE_SYSTEM redraw_fns[] = {
 
 PURE_SYSTEM deinit_fns[] = {
         misc_allegro_deinit,
+        deinit_game,
         deinit_colliders,
         deinit_sprites,
         deinit_health,

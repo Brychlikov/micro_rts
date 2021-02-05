@@ -75,6 +75,9 @@ typedef struct GameState{
             int player_base;
             int enemy_base;
             int victory_state;
+            
+            Vector_int player_auxiliary_bases;
+            Vector_int enemy_auxiliary_bases;
 
             float player_income;
             float enemy_income;
@@ -105,6 +108,8 @@ void init_components(GameState* gs);
 void deinit_components(GameState* gs);
 
 void init_game(GameState* gs);
+
+void deinit_game(GameState* gs);
 
 int create_entity(GameState* gs);
 

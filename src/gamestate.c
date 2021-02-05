@@ -6,7 +6,11 @@
 #include "building.h"
 
 #define PLAYER_BASE_INCOME 10
-#define ENEMY_BASE_INCOME 45
+#define ENEMY_INCOME_MULTIPLIER 2.0
+
+#define INCOME_PER_BASE 5
+#define AUX_BASE_HP 200
+#define MAIN_BASE_MAX_HP 1000
 
 void init_components(GameState *gs) {
     gs->entities = vec_bool_new();
@@ -23,22 +27,72 @@ void deinit_components(GameState *gs) {
 
 void init_game(GameState* gs) {
 
-    int enemy_building = create_building(gs, vec2_make(1180, 100), ENEMY_TEAM);
-    int player_building = create_building(gs, vec2_make(100, 620), PLAYER_TEAM);
+    int enemy_building = create_building(gs, vec2_make(1180, 100), 1, MAIN_BASE_MAX_HP, ENEMY_TEAM);
+    int player_building = create_building(gs, vec2_make(100, 620), 1, MAIN_BASE_MAX_HP,  PLAYER_TEAM);
 
     gs->resources.game.enemy_base = enemy_building;
     gs->resources.game.player_base = player_building;
 
     gs->resources.game.player_income = PLAYER_BASE_INCOME;
-    gs->resources.game.enemy_income = ENEMY_BASE_INCOME;
+    gs->resources.game.enemy_income = PLAYER_BASE_INCOME * ENEMY_INCOME_MULTIPLIER;
 
     gs->resources.game.player_balance = 0;
     gs->resources.game.enemy_balance = 0;
 
+    gs->resources.game.player_auxiliary_bases = vec_int_new();
+    gs->resources.game.enemy_auxiliary_bases = vec_int_new();
+
+    int base1 = create_building(gs, vec2_make(100, 520), 0.5, AUX_BASE_HP, PLAYER_TEAM);
+    int base2 = create_building(gs, vec2_make(100, 420), 0.5, AUX_BASE_HP, PLAYER_TEAM);
+    int base3 = create_building(gs, vec2_make(100, 320), 0.5, AUX_BASE_HP, PLAYER_TEAM);
+    int base4 = create_building(gs, vec2_make(100, 220), 0.5, AUX_BASE_HP, PLAYER_TEAM);
+
+    vec_int_push(gs->resources.game.player_auxiliary_bases, base1);
+    vec_int_push(gs->resources.game.player_auxiliary_bases, base2);
+    vec_int_push(gs->resources.game.player_auxiliary_bases, base3);
+    vec_int_push(gs->resources.game.player_auxiliary_bases, base4);
+
+    int enemy_base1 = create_building(gs, vec2_make(1100, 520), 0.5, AUX_BASE_HP, ENEMY_TEAM);
+    int enemy_base2 = create_building(gs, vec2_make(1100, 420), 0.5, AUX_BASE_HP, ENEMY_TEAM);
+    int enemy_base3 = create_building(gs, vec2_make(1100, 320), 0.5, AUX_BASE_HP, ENEMY_TEAM);
+    int enemy_base4 = create_building(gs, vec2_make(1100, 220), 0.5, AUX_BASE_HP, ENEMY_TEAM);
+
+    vec_int_push(gs->resources.game.enemy_auxiliary_bases, enemy_base1);
+    vec_int_push(gs->resources.game.enemy_auxiliary_bases, enemy_base2);
+    vec_int_push(gs->resources.game.enemy_auxiliary_bases, enemy_base3);
+    vec_int_push(gs->resources.game.enemy_auxiliary_bases, enemy_base4);
+
     create_laser_turret(gs, vec2_make(1100, 300), ENEMY_TEAM);
 }
 
+void deinit_game(GameState *gs) {
+    vec_int_destroy(gs->resources.game.player_auxiliary_bases);
+    vec_int_destroy(gs->resources.game.enemy_auxiliary_bases);
+}
+
 void process_income(GameState *gs) {
+    float player_income = PLAYER_BASE_INCOME;
+    for (int i = 0; i < VEC_LEN(gs->resources.game.player_auxiliary_bases); ++i) {
+        int entity = vec_int_get(gs->resources.game.player_auxiliary_bases, i);
+        bool alive = vec_bool_get(gs->entities, entity);
+        if(alive) {
+            player_income += INCOME_PER_BASE;
+        }
+    }
+
+    float enemy_income = PLAYER_BASE_INCOME;
+    for (int i = 0; i < VEC_LEN(gs->resources.game.enemy_auxiliary_bases); ++i) {
+        int entity = vec_int_get(gs->resources.game.enemy_auxiliary_bases, i);
+        bool alive = vec_bool_get(gs->entities, entity);
+        if(alive) {
+            enemy_income += INCOME_PER_BASE;
+        }
+    }
+    enemy_income *= ENEMY_INCOME_MULTIPLIER;
+
+    gs->resources.game.player_income = player_income;
+    gs->resources.game.enemy_income = enemy_income;
+
     gs->resources.game.player_balance += gs->resources.time_delta * gs->resources.game.player_income;
     gs->resources.game.enemy_balance += gs->resources.time_delta * gs->resources.game.enemy_income;
 }

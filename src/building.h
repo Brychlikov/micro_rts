@@ -8,6 +8,6 @@
 #include "gamestate_forward.h"
 #include "coord_utils.h"
 
-int create_building(GameState*, Vec2 position, int team);
+int create_building(GameState*, Vec2 position, float scale, int max_hp, int team);
 
 #endif //_RTS_BUILDING_H
