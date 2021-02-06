@@ -19,7 +19,7 @@ void deinit_bullets(GameState *gs) {
     vec_BulletComponent_destroy(gs->bullet_components);
 }
 
-void create_bullet(GameState* gs, Transform t, int team) {
+void create_bullet(GameState* gs, Transform t, int team, int damage) {
     int new = create_entity(gs);
     t.entity = new;
 
@@ -28,7 +28,7 @@ void create_bullet(GameState* gs, Transform t, int team) {
     BulletComponent bc = {
             .exists=true,
             .team=team,
-            .damage=BULLET_DAMAGE,
+            .damage=damage,
             .time_remaining=BULLET_LIFE,
             .entity=new,
     };

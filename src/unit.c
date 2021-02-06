@@ -9,9 +9,12 @@
 #include <math.h>
 #include "keyboard.h"
 
-#define UNIT_SPEED 100
+#define UNIT_SPEED 50
 #define UNIT_OVERDRIVE_SPEED 150
 #define UNIT_OVERDRIVE_ROTATION_SPEED 4
+
+#define UNIT_DAMAGE 10
+#define UNIT_OVERDRIVE_MULTIPLIER 3.0f
 #define UNIT_SHOT_COOLDOWN 1.0
 #define PI 3.14159265
 #define GROUPING_ITERATIONS 10
@@ -69,6 +72,7 @@ int create_unit(GameState *gs, Vec2 position, int team) {
             .sm={
                     .state=IDLE,
             },
+            .overdrive=false,
             .entity=new,
     };
     *vec_UnitComponent_get_ptr(gs->unit_components, new) = uc;
@@ -94,6 +98,8 @@ void init_units(GameState* gs) {
     gs->unit_components = vec_UnitComponent_new();
     units_selected = vec_int_with_capacity(64);
 
+    gs->resources.overdrive.units = vec_int_new();
+
     // ECS land below
     create_unit(gs, vec2_make(100, 100), 0);
     create_unit(gs, vec2_make(200, 100), 0);
@@ -108,6 +114,7 @@ void init_units(GameState* gs) {
 
 void deinit_units(GameState* gs) {
     vec_UnitComponent_destroy(gs->unit_components);
+    vec_int_destroy(gs->resources.overdrive.units);
 }
 
 //void draw_units(GameState *gs) {
@@ -177,6 +184,8 @@ void advance_units(GameState *gs) {
         Transform* my_transform = vec_Transform_get_ptr(gs->transform_components, i);
         Health my_health = vec_Health_get(gs->health_components, i);
 
+        float overdrive_multiplier = unit->overdrive ? UNIT_OVERDRIVE_MULTIPLIER : 1.0f;
+
         switch(unit->sm.state) {
             case A_MOVE:
                 ;
@@ -198,7 +207,7 @@ void advance_units(GameState *gs) {
                 ;     // I hate this language sooooo much
                 Vec2 diff = vec2_sub(unit->sm.move.dest, my_transform->position);
                 Vec2 delta;
-                float distance = gs->resources.time_delta * UNIT_SPEED;
+                float distance = gs->resources.time_delta * UNIT_SPEED * overdrive_multiplier;
                 //TODO make it adhere to time deltas
                 if(vec2_length(diff) <= distance) {
                     delta = vec2_sub(unit->sm.move.dest, my_transform->position);
@@ -235,7 +244,7 @@ void advance_units(GameState *gs) {
                 unit->sm.aggressive.shot_cooldown -= gs->resources.time_delta;
                 if(unit->sm.aggressive.shot_cooldown < 0) unit->sm.aggressive.shot_cooldown = 0;
                 if(unit->sm.aggressive.shot_cooldown == 0) {
-                    create_bullet(gs, *my_transform, my_health.team);
+                    create_bullet(gs, *my_transform, my_health.team, UNIT_DAMAGE * overdrive_multiplier);
                     // create_bullet can cause a realloc, invalidating unit pointer
                     unit = vec_UnitComponent_get_ptr(gs->unit_components, i);
                     unit->sm.aggressive.shot_cooldown += UNIT_SHOT_COOLDOWN;
@@ -363,73 +372,66 @@ void command_units(GameState *gs) {
 void process_overdrive(GameState *gs) {
     if(gs->resources.keys[ALLEGRO_KEY_ESCAPE]) {
         gs->resources.overdrive.active = false;
-        UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, gs->resources.overdrive.unit);
-        uc->exists = true;
+
+        for (int i = 0; i < VEC_LEN(gs->resources.overdrive.units); ++i) {
+            int entity = vec_int_get(gs->resources.overdrive.units, i);
+            UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
+            uc->overdrive = false;
+            vec_int_clear(gs->resources.overdrive.units);
+        }
     }
-    if(gs->resources.keys[ALLEGRO_KEY_E]) {
-        if(VEC_LEN(gs->resources.selection.entities_selected) == 1) {
-            int entity_selected = vec_int_get(gs->resources.selection.entities_selected, 0);
-            UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity_selected);
-            if(!uc->exists) {
-                return;
+
+    if(gs->resources.keys[ALLEGRO_KEY_E] & KEY_UNPROCESSED) {
+
+        bool any_overdriven = false;
+        bool all_overdriven = true;
+        for (int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
+            int entity = vec_int_get(gs->resources.selection.entities_selected, i);
+            UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
+            if(uc->overdrive) {
+                any_overdriven = true;
             }
-            gs->resources.overdrive.active = true;
-            gs->resources.overdrive.unit = entity_selected;
-            uc->exists = false;  // disable Unit AI
+            else {
+                all_overdriven = false;
+            }
         }
-    }
-    if(!gs->resources.overdrive.active) return;
-    int entity = gs->resources.overdrive.unit;
-    bool alive = vec_bool_get(gs->entities, entity);
 
-    if(!alive) {
-        gs->resources.overdrive.active = false;
-        return;
-    }
+        if(all_overdriven) { // disable overdrives
+            for (int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
+                int entity = vec_int_get(gs->resources.selection.entities_selected, i);
 
-    Transform* t = vec_Transform_get_ptr(gs->transform_components, entity);
+                UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
+                if(!uc->exists) continue;
 
-    Vec2 direction = vec2_make(0, 0);
-
-    if(gs->resources.keys[ALLEGRO_KEY_A]) {  // rotate left
-        direction = vec2_add(direction, vec2_make(-1, 0));
-    }
-    if(gs->resources.keys[ALLEGRO_KEY_D]) {
-        direction = vec2_add(direction, vec2_make(1, 0));
-    }
-
-    if(gs->resources.keys[ALLEGRO_KEY_W]) {
-        direction = vec2_add(direction, vec2_make(0, -1));
-    }
-    if(gs->resources.keys[ALLEGRO_KEY_S]) {
-        direction = vec2_add(direction, vec2_make(0, 1));
-    }
-
-    Vec2 delta;
-    if(direction.x != 0 || direction.y != 0) {
-        direction = vec2_norm(direction);
-        delta = vec2_scale(direction, UNIT_OVERDRIVE_SPEED * gs->resources.time_delta);
-    }
-    else {
-        delta = vec2_make(0, 0);
-    }
-
-    Vec2 to_mouse = vec2_sub(gs->resources.mouse_position, t->position);
-    t->rotation = atan2f(to_mouse.y, to_mouse.x);
-
-    t->position = vec2_add(t->position, delta);
-
-
-    UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
-    uc->sm.aggressive.shot_cooldown -= gs->resources.time_delta;
-    if(uc->sm.aggressive.shot_cooldown < 0) uc->sm.aggressive.shot_cooldown = 0;
-    if(gs->resources.mouse_buttons[LEFT_MOUSE_BUTTON]) {
-        if(uc->sm.aggressive.shot_cooldown == 0) {
-            create_bullet(gs, *t, PLAYER_TEAM);
-            // create_bullet can cause a realloc, invalidating uc pointer
-            uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
-            uc->sm.aggressive.shot_cooldown = UNIT_SHOT_COOLDOWN / 2;
+                uc->overdrive = false;
+            }
         }
+        else {  // add new units to overdrive
+            for (int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
+                int entity = vec_int_get(gs->resources.selection.entities_selected, i);
+
+                UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
+                if(!uc->exists) continue;
+
+                if(!uc->overdrive) {
+                    uc->overdrive = true;
+                    vec_int_push(gs->resources.overdrive.units, entity);
+                }
+
+            }
+        }
+
+        Vector_int new_overdrives =  vec_int_new();
+        for (int i = 0; i < VEC_LEN(gs->resources.overdrive.units); ++i) {
+            int entity = vec_int_get(gs->resources.overdrive.units, i);
+            UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
+            bool alive =  vec_bool_get(gs->entities, entity);
+            if(alive && uc->overdrive) {
+                vec_int_push(new_overdrives, entity);
+            }
+        }
+        vec_int_destroy(gs->resources.overdrive.units);
+        gs->resources.overdrive.units = new_overdrives;
     }
 
 }

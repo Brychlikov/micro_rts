@@ -130,7 +130,7 @@ PURE_SYSTEM redraw_fns[] = {
         process_bullets,
         health_system,
         process_enemy,
-        process_income,
+        update_income_values,
         buy_units,
         process_overdrive,
 
@@ -140,6 +140,7 @@ PURE_SYSTEM redraw_fns[] = {
 //        draw_units,
         draw_sprites,
         command_units,
+        process_income,
         render_balance,
 
         reset_keys, // these should always be last
@@ -154,6 +155,7 @@ PURE_SYSTEM deinit_fns[] = {
         deinit_health,
         deinit_bullets,
         deinit_enemy,
+        deinit_units,
         deinit_selection_system,
         deinit_laser_turrets,
         deinit_components,

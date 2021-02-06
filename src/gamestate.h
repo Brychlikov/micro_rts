@@ -67,8 +67,7 @@ typedef struct GameState{
 
         struct {
             bool active;
-            int unit;
-            UnitComponent old_uc;
+            Vector_int units;
         } overdrive;
 
         struct {
@@ -114,6 +113,8 @@ void deinit_game(GameState* gs);
 int create_entity(GameState* gs);
 
 void destroy_entity(GameState* gs, Entity entity);
+
+void update_income_values(GameState* gs);
 
 void process_income(GameState* gs);
 

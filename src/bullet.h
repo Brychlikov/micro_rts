@@ -16,7 +16,7 @@ void init_bullets(GameState* gs);
 
 void deinit_bullets(GameState* gs);
 
-void create_bullet(GameState* gs, Transform t, int team);
+void create_bullet(GameState* gs, Transform t, int team, int damage);
 
 void process_bullets(GameState* gs);
 

@@ -67,3 +67,19 @@ void vec_destroy(Vector *vec) {
     free(vec);
 }
 
+bool vec_int_contains(Vector_int vec, int el) {
+    int lo = 0;
+    int hi = VEC_LEN(vec);
+    while (lo != hi) {
+        int mid = (lo + hi) / 2;
+        int val = vec_int_get(vec, mid);
+        if(val == el) return true;
+        if(val > el) {
+            lo = mid + 1;
+        }
+        else {
+            hi = mid;
+        }
+    }
+    return false;
+}

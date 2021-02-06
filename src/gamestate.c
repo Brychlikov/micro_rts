@@ -12,6 +12,8 @@
 #define AUX_BASE_HP 200
 #define MAIN_BASE_MAX_HP 1000
 
+#define OVERDRIVE_COST 5
+
 void init_components(GameState *gs) {
     gs->entities = vec_bool_new();
 
@@ -22,7 +24,6 @@ void deinit_components(GameState *gs) {
     vec_bool_destroy(gs->entities);
 
     vec_Transform_destroy(gs->transform_components);
-    vec_UnitComponent_destroy(gs->unit_components);
 }
 
 void init_game(GameState* gs) {
@@ -70,7 +71,7 @@ void deinit_game(GameState *gs) {
     vec_int_destroy(gs->resources.game.enemy_auxiliary_bases);
 }
 
-void process_income(GameState *gs) {
+void update_income_values(GameState *gs) {
     float player_income = PLAYER_BASE_INCOME;
     for (int i = 0; i < VEC_LEN(gs->resources.game.player_auxiliary_bases); ++i) {
         int entity = vec_int_get(gs->resources.game.player_auxiliary_bases, i);
@@ -79,6 +80,17 @@ void process_income(GameState *gs) {
             player_income += INCOME_PER_BASE;
         }
     }
+
+    // add overdrive cost
+    int count = 0;
+    for (int i = 0; i < VEC_LEN(gs->resources.overdrive.units); ++i) {
+        int entity = vec_int_get(gs->resources.overdrive.units, i);
+        count += vec_bool_get(gs->entities, entity) ? 1 : 0;
+    }
+
+    printf("VECLEN: %d, count: %d\n", VEC_LEN(gs->resources.overdrive.units), count);
+
+    player_income -= count * OVERDRIVE_COST;
 
     float enemy_income = PLAYER_BASE_INCOME;
     for (int i = 0; i < VEC_LEN(gs->resources.game.enemy_auxiliary_bases); ++i) {
@@ -92,7 +104,9 @@ void process_income(GameState *gs) {
 
     gs->resources.game.player_income = player_income;
     gs->resources.game.enemy_income = enemy_income;
+}
 
+void process_income(GameState* gs) {
     gs->resources.game.player_balance += gs->resources.time_delta * gs->resources.game.player_income;
     gs->resources.game.enemy_balance += gs->resources.time_delta * gs->resources.game.enemy_income;
 }

@@ -46,6 +46,7 @@ typedef struct UnitStateMachine {
 typedef struct UnitComponent {
     bool exists;
     UnitStateMachine sm;
+    bool overdrive;
     int entity;
 } UnitComponent;
 
@@ -56,6 +57,8 @@ GENERATE_VECTOR_DECLARATION(UnitComponent)
 
 
 void init_units(GameState* gs);
+
+void deinit_units(GameState* gs);
 
 void draw_units(GameState* gs);
 

@@ -77,5 +77,7 @@ void vec_destroy(Vector* vec);
 
 void vec_clear(Vector* vec);
 
+bool vec_int_contains(Vector_int vec, int el);
+
 
 #endif //_RTS_VECTOR_H
