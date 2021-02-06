@@ -38,6 +38,7 @@ int create_building(GameState* gs, Vec2 position, float scale, int max_hp, int t
     Health h = {
             .exists=true,
             .points=max_hp,
+            .max_points=max_hp,
             .team=team,
             .entity=new,
     };

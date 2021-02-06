@@ -13,6 +13,7 @@
 #include "sprite.h"
 #include "collider.h"
 #include "building.h"
+#include "health_bars.h"
 #include "laser_turret.h"
 #include "enemy.h"
 
@@ -139,6 +140,7 @@ PURE_SYSTEM redraw_fns[] = {
 #endif
 //        draw_units,
         draw_sprites,
+        draw_healthbars,
         command_units,
         process_income,
         render_balance,

@@ -81,6 +81,7 @@ int create_unit(GameState *gs, Vec2 position, int team) {
             .exists=true,
             .team=team,
             .points=UNIT_HP,
+            .max_points=UNIT_HP,
             .entity=new,
     };
     *vec_Health_get_ptr(gs->health_components, new) = h;

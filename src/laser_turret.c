@@ -52,6 +52,7 @@ int create_laser_turret(GameState* gs, Vec2 position, int team) {
     Health h = {
             .exists=true,
             .points=LASER_TURRET_HP,
+            .max_points=LASER_TURRET_HP,
             .team=team,
             .entity=new,
     };

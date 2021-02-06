@@ -88,8 +88,6 @@ void update_income_values(GameState *gs) {
         count += vec_bool_get(gs->entities, entity) ? 1 : 0;
     }
 
-    printf("VECLEN: %d, count: %d\n", VEC_LEN(gs->resources.overdrive.units), count);
-
     player_income -= count * OVERDRIVE_COST;
 
     float enemy_income = PLAYER_BASE_INCOME;

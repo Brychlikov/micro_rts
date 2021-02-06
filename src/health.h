@@ -14,6 +14,7 @@
 typedef struct {
     bool exists;
     int points;
+    int max_points;
     int team;
     int entity;
 } Health;
