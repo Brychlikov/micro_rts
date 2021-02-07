@@ -39,6 +39,7 @@ void misc_allegro_init(GameState* gs) {
     al_register_event_source(gs->queue, al_get_timer_event_source(gs->timer));
 
     al_start_timer(gs->timer);
+    al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
 }
 
 void misc_allegro_deinit(GameState* gs) {
@@ -89,7 +90,7 @@ void prep_redraw(GameState* gs) {
         }
     }
     gs->resources.last_frame_timestamp = now;
-    al_clear_to_color(al_map_rgba(0, 0, 0, 255));
+    al_clear_to_color(al_map_rgba(30, 30, 50, 255));
 }
 
 void render_pause_ui(GameState* gs) {
