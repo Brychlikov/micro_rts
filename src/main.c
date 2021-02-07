@@ -72,14 +72,32 @@ void prep_redraw(GameState* gs) {
     long usecs_elapsed = (now.tv_sec - gs->resources.last_frame_timestamp.tv_sec) * 1000000 + \
         (now.tv_nsec - gs->resources.last_frame_timestamp.tv_nsec) / 1000;
 
+    if(gs->resources.keys[ALLEGRO_KEY_P] & KEY_UNPROCESSED) {
+        gs->resources.paused = !gs->resources.paused;
+    }
+
     if(gs->resources.last_frame_timestamp.tv_sec == 0) {  // first frame of the game
         gs->resources.time_delta = 1.0/60;
     }
     else {
-        gs->resources.time_delta = (float)usecs_elapsed / 1000000;
+        if(gs->resources.paused) {
+            gs->resources.time_delta = 0;
+        }
+        else {
+            gs->resources.time_delta = (float)usecs_elapsed / 1000000;
+        }
     }
     gs->resources.last_frame_timestamp = now;
     al_clear_to_color(al_map_rgba(0, 0, 0, 255));
+}
+
+void render_pause_ui(GameState* gs) {
+    if(gs->resources.paused) {
+        int screen_height = al_get_display_height(gs->display);
+        int screen_width = al_get_display_width(gs->display);
+        al_draw_filled_rectangle(0, 0, screen_width, screen_height, al_map_rgba_f(0, 0, 0, 0.9));
+        al_draw_text(gs->font, al_map_rgb(255, 255, 255), screen_width / 2, screen_height / 2, ALLEGRO_ALIGN_CENTRE, "Game paused. Press P to unpause.");
+    }
 }
 
 void print_collisions(GameState* gs) {
@@ -143,6 +161,7 @@ PURE_SYSTEM redraw_fns[] = {
         draw_healthbars,
         command_units,
         process_income,
+        render_pause_ui,
         render_balance,
 
         reset_keys, // these should always be last
