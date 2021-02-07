@@ -16,6 +16,7 @@
 #include "health_bars.h"
 #include "laser_turret.h"
 #include "enemy.h"
+#include "tints.h"
 
 #define FUNARR_LEN(arr) (sizeof(arr)/sizeof(size_t))
 
@@ -128,6 +129,7 @@ PURE_SYSTEM init_fns[] = {
         init_laser_turrets,
         init_units,
         init_enemy,
+        init_tints,
         init_game,
 };
 
@@ -157,6 +159,7 @@ PURE_SYSTEM redraw_fns[] = {
         draw_colliders,
 #endif
 //        draw_units,
+        tint_sprites,
         draw_sprites,
         draw_healthbars,
         command_units,

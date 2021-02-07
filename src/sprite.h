@@ -10,6 +10,8 @@
 #include "coord_utils.h"
 #include "gamestate_forward.h"
 
+extern ALLEGRO_COLOR pure_tint;
+
 typedef struct {
     bool exists;  // we want all components to have this as first field
     ALLEGRO_BITMAP* bitmap;

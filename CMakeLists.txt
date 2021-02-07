@@ -24,6 +24,6 @@ add_executable(_rts
         src/vector.c src/vector.h
         src/sprite.c src/sprite.h
         src/collider.h src/collider.c
-        src/gamestate_forward.h src/health.c src/health.h src/building.c src/building.h src/bullet.c src/bullet.h src/enemy.c src/enemy.h src/laser_turret.c src/laser_turret.h src/health_bars.c src/health_bars.h)
+        src/gamestate_forward.h src/health.c src/health.h src/building.c src/building.h src/bullet.c src/bullet.h src/enemy.c src/enemy.h src/laser_turret.c src/laser_turret.h src/health_bars.c src/health_bars.h src/tints.c src/tints.h)
 
 target_link_libraries(_rts ${ALLEGRO_LIBRARIES} m)

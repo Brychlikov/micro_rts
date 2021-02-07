@@ -14,8 +14,8 @@
 #include "gamestate_forward.h"
 
 #define UNIT_COST 100
-extern ALLEGRO_COLOR pure_tint;
-extern ALLEGRO_COLOR selected_tint;
+//extern ALLEGRO_COLOR pure_tint;
+//extern ALLEGRO_COLOR selected_tint;
 
 typedef enum UnitState {
     IDLE,

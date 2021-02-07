@@ -75,10 +75,10 @@ bool vec_int_contains(Vector_int vec, int el) {
         int val = vec_int_get(vec, mid);
         if(val == el) return true;
         if(val > el) {
-            lo = mid + 1;
+            hi = mid;
         }
         else {
-            hi = mid;
+            lo = mid + 1;
         }
     }
     return false;

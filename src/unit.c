@@ -29,8 +29,8 @@
 GENERATE_VECTOR_DEFINITION(UnitComponent)
 
 
-ALLEGRO_COLOR pure_tint;
-ALLEGRO_COLOR selected_tint;
+//ALLEGRO_COLOR pure_tint;
+//ALLEGRO_COLOR selected_tint;
 
 int create_unit(GameState *gs, Vec2 position, int team) {
 
@@ -92,10 +92,6 @@ int create_unit(GameState *gs, Vec2 position, int team) {
 Vector_int units_selected;
 
 void init_units(GameState* gs) {
-
-    pure_tint = al_map_rgba_f(1, 1, 1, 1);
-    selected_tint = al_map_rgba_f(0.3, 1, 0.3, 1);
-
     gs->unit_components = vec_UnitComponent_new();
     units_selected = vec_int_with_capacity(64);
 

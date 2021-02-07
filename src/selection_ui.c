@@ -30,7 +30,6 @@ void draw_selection_area(GameState* gs) {
 }
 
 void selection_system(GameState* gs) {
-    if(gs->resources.overdrive.active) return;  // disable in overdrive mode
     if(gs->resources.mouse_buttons[LEFT_MOUSE_BUTTON] & MOUSE_KEY_UNPROCESSED) {
         gs->resources.selection.in_progress = true;
 //        printf("beginning selection\n");
@@ -42,13 +41,6 @@ void selection_system(GameState* gs) {
         gs->resources.selection.in_progress = false;
         gs->resources.selection.area.br = gs->resources.mouse_position;
 
-        // clear tint of selected units
-        for (int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
-            int entity = vec_int_get(gs->resources.selection.entities_selected, i);
-            Sprite* s = vec_Sprite_get_ptr(gs->sprite_components, entity);
-            // assigning is safe, even to non-existent sprite components
-            s->tint = pure_tint;
-        }
 
         vec_int_clear(gs->resources.selection.entities_selected);
 
@@ -75,14 +67,8 @@ void selection_system(GameState* gs) {
 
             if(collision_result == COLLISION) {
                 vec_int_push(gs->resources.selection.entities_selected, i);
-                Sprite* s = vec_Sprite_get_ptr(gs->sprite_components, i);
-                s->tint = selected_tint;
             }
 
-        }
-        for(int i=0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
-            size_t index = vec_int_get(gs->resources.selection.entities_selected, i);
-//            printf("Entity selected: %ld\n", index);
         }
     }
 
