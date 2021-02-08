@@ -411,7 +411,7 @@ void process_overdrive(GameState *gs) {
             uc->overdrive = false;
             h->points = 10;  // probably enough to just set it to 10 hp
             // it is *theoretically* possible that it would heal a unit
-            // ... but a player pulls that off, they should be rewarded for their ingenuity
+            // ... but if a player pulls that off, they should be rewarded for their ingenuity
 
             // overdrive vector will be cleaned up at the end of the function
         }
