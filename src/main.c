@@ -32,7 +32,7 @@ void misc_allegro_init(GameState* gs) {
 
     gs->timer = al_create_timer(1.0 / 60.0);
     gs->queue = al_create_event_queue();
-    gs->display = al_create_display(1280, 720);
+    gs->display = al_create_display(1920, 1080);
     gs->font = al_create_builtin_font();
 
     al_register_event_source(gs->queue, al_get_display_event_source(gs->display));
@@ -94,7 +94,8 @@ void prep_redraw(GameState* gs) {
         }
     }
     gs->resources.last_frame_timestamp = now;
-    al_clear_to_color(al_map_rgba(30, 30, 50, 255));
+//    al_clear_to_color(al_map_rgba(30, 30, 50, 255));
+    al_clear_to_color(color_code_to_allegro("2C1409"));
 }
 
 void render_pause_ui(GameState* gs) {

@@ -12,10 +12,22 @@ ALLEGRO_COLOR enemy_tint;
 ALLEGRO_COLOR overdrive_tint;
 ALLEGRO_COLOR selected_overdrive_tint;
 
+ALLEGRO_COLOR color_code_to_allegro(const char *s) {
+    int combined_color;
+    combined_color = (int)strtol(s, NULL, 16);
+    int last_byte_mask = 255;
+    int blue = combined_color & last_byte_mask;
+    combined_color >>= 8;
+    int green = combined_color & last_byte_mask;
+    combined_color >>= 8;
+    int red = combined_color;
+    return al_map_rgb(red, green, blue);
+}
+
 void init_tints(GameState* gs) {
-    selected_tint = al_map_rgba_f(0.5, 1, 0.5, 1);
+    selected_tint = al_map_rgba_f(0.3, 0.8, 0.3, 1);
     enemy_tint = al_map_rgba_f(1, 0.5, 0.5, 1);
-    overdrive_tint = al_map_rgba_f(1, 1, 0.3, 1);
+    overdrive_tint = color_code_to_allegro("5A853B");
     selected_overdrive_tint = al_map_rgba_f(0.7, 1, 0.3, 1);
 }
 

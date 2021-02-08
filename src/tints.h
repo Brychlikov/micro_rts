@@ -16,4 +16,7 @@ void tint_sprites(GameState* gs);
 
 void init_tints(GameState* gs);
 
+ALLEGRO_COLOR color_code_to_allegro(const char* s);
+
+
 #endif //_RTS_TINTS_H

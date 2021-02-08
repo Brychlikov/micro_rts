@@ -28,11 +28,59 @@ void deinit_components(GameState *gs) {
 
 void init_game(GameState* gs) {
 
-    int enemy_building = create_building(gs, vec2_make(1180, 100), 1, MAIN_BASE_MAX_HP, ENEMY_TEAM);
-    int player_building = create_building(gs, vec2_make(100, 620), 1, MAIN_BASE_MAX_HP,  PLAYER_TEAM);
+    gs->resources.game.player_auxiliary_bases = vec_int_new();
+    gs->resources.game.enemy_auxiliary_bases = vec_int_new();
 
-    gs->resources.game.enemy_base = enemy_building;
-    gs->resources.game.player_base = player_building;
+
+    FILE* map = fopen("assets/map.txt", "r");
+    if(map == NULL) {
+        fprintf(stderr, "Could not read map file. Is the ./assets folder accessible?\n");
+        exit(1);
+    }
+    int width, height;
+    fscanf(map, "%d %d", &width, &height);
+    float marigin = 100;
+    float usable_width = (float)al_get_display_width(gs->display) - 2 * marigin;
+    float usable_height = (float)al_get_display_height(gs->display) - 2 * marigin;
+
+    for (int map_y = 0; map_y < height; ++map_y) {
+        for (int map_x = 0; map_x < width; ++map_x) {
+            float x = marigin + (float)map_x / (float)width * usable_width;
+            float y = marigin + (float)map_y / (float)height * usable_height;
+            char c;
+            fscanf(map, " %c", &c);
+
+            switch(c) {
+                case '#':  // player main base
+                    ;
+                    int player_base = create_building(gs, vec2_make(x, y), 1, MAIN_BASE_MAX_HP,  PLAYER_TEAM);
+                    gs->resources.game.player_base = player_base;
+                    break;
+                case '$':  // enemy main base
+                    ;
+                    int enemy_base = create_building(gs, vec2_make(x, y), 1, MAIN_BASE_MAX_HP,  ENEMY_TEAM);
+                    gs->resources.game.enemy_base = enemy_base;
+                    break;
+                case '*': // player auxiliary base
+                    ;
+                    int aux_player_base = create_building(gs, vec2_make(x, y), 0.5, AUX_BASE_HP, PLAYER_TEAM);
+                    vec_int_push(gs->resources.game.player_auxiliary_bases, aux_player_base);
+                    break;
+                case '@': // enemy auxiliary base
+                    ;
+                    int aux_enemy_base = create_building(gs, vec2_make(x, y), 0.5, AUX_BASE_HP, ENEMY_TEAM);
+                    vec_int_push(gs->resources.game.enemy_auxiliary_bases, aux_enemy_base);
+                    break;
+                case 'x':  // enemy laser turret
+                    ;
+                    create_laser_turret(gs, vec2_make(x, y), ENEMY_TEAM);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
 
     gs->resources.game.player_income = PLAYER_BASE_INCOME;
     gs->resources.game.enemy_income = PLAYER_BASE_INCOME * ENEMY_INCOME_MULTIPLIER;
@@ -40,30 +88,6 @@ void init_game(GameState* gs) {
     gs->resources.game.player_balance = 0;
     gs->resources.game.enemy_balance = 0;
 
-    gs->resources.game.player_auxiliary_bases = vec_int_new();
-    gs->resources.game.enemy_auxiliary_bases = vec_int_new();
-
-    int base1 = create_building(gs, vec2_make(100, 520), 0.5, AUX_BASE_HP, PLAYER_TEAM);
-    int base2 = create_building(gs, vec2_make(100, 420), 0.5, AUX_BASE_HP, PLAYER_TEAM);
-    int base3 = create_building(gs, vec2_make(100, 320), 0.5, AUX_BASE_HP, PLAYER_TEAM);
-    int base4 = create_building(gs, vec2_make(100, 220), 0.5, AUX_BASE_HP, PLAYER_TEAM);
-
-    vec_int_push(gs->resources.game.player_auxiliary_bases, base1);
-    vec_int_push(gs->resources.game.player_auxiliary_bases, base2);
-    vec_int_push(gs->resources.game.player_auxiliary_bases, base3);
-    vec_int_push(gs->resources.game.player_auxiliary_bases, base4);
-
-    int enemy_base1 = create_building(gs, vec2_make(1100, 520), 0.5, AUX_BASE_HP, ENEMY_TEAM);
-    int enemy_base2 = create_building(gs, vec2_make(1100, 420), 0.5, AUX_BASE_HP, ENEMY_TEAM);
-    int enemy_base3 = create_building(gs, vec2_make(1100, 320), 0.5, AUX_BASE_HP, ENEMY_TEAM);
-    int enemy_base4 = create_building(gs, vec2_make(1100, 220), 0.5, AUX_BASE_HP, ENEMY_TEAM);
-
-    vec_int_push(gs->resources.game.enemy_auxiliary_bases, enemy_base1);
-    vec_int_push(gs->resources.game.enemy_auxiliary_bases, enemy_base2);
-    vec_int_push(gs->resources.game.enemy_auxiliary_bases, enemy_base3);
-    vec_int_push(gs->resources.game.enemy_auxiliary_bases, enemy_base4);
-
-    create_laser_turret(gs, vec2_make(1100, 300), ENEMY_TEAM);
 }
 
 void deinit_game(GameState *gs) {
