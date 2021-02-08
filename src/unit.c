@@ -265,11 +265,76 @@ void advance_units(GameState *gs) {
     vec_int_destroy(targetables);
 }
 
+Vector_Vec2 calculate_group_offsets(GameState *gs, Vector_int units) {
+    Vector_Vec2 result = vec_Vec2_with_capacity(units.inner->length);
+    Vec2 mean_position = vec2_make(0, 0);
+
+    for (int i = 0; i < VEC_LEN(units); ++i) {
+        int entity = vec_int_get(units, i);
+        Transform t = vec_Transform_get(gs->transform_components, entity);
+        mean_position = vec2_add(mean_position, t.position);
+    }
+
+    mean_position = vec2_scale(mean_position, 1.0f / VEC_LEN(units));
+
+    // calculate the center unit
+    int center_unit;
+    float closest_dist = INFINITY;
+    for (int i = 0; i < VEC_LEN(units_selected); ++i) {
+        int entity = vec_int_get(units_selected, i);
+        Transform t = vec_Transform_get(gs->transform_components, entity);
+        if(vec2_length(vec2_sub(mean_position, t.position)) < closest_dist) {
+            closest_dist = vec2_length(vec2_sub(mean_position, t.position));
+            center_unit = entity;
+        }
+    }
+
+    Transform center_transform = vec_Transform_get(gs->transform_components, center_unit);
+
+    for (int i = 0; i < VEC_LEN(units_selected); ++i) {
+        int entity = vec_int_get(units_selected, i);
+        Transform t = vec_Transform_get(gs->transform_components, entity);
+
+        Vec2 offset = vec2_sub(center_transform.position, t.position);
+        vec_Vec2_push(result, offset);
+    }
+
+    for (int i = 0; i < GROUPING_ITERATIONS; ++i) {
+        for (int j = 0; j < VEC_LEN(units_selected); ++j) {
+            Vec2* offset = vec_Vec2_get_ptr(result, j);
+            if(offset->x == 0 && offset->y == 0) {
+                continue;
+            }
+            Vec2 dir_to_center = vec2_norm(vec2_flip(*offset));
+
+            //calculate repel vector
+            Vec2 repel = vec2_make(0, 0);
+            for (int k = 0; k < VEC_LEN(units_selected); ++k) {
+                Vec2* other = vec_Vec2_get_ptr(result, k);
+                if(other == offset) continue;
+
+                Vec2 diff = vec2_sub(*offset, *other);
+                float diff_len_sq = vec2_length_sq(diff);
+                if(diff_len_sq == 0) continue;
+
+                Vec2 direction = vec2_norm(diff);
+                repel = vec2_add(repel, vec2_scale(direction, REPEL_MULTIPLIER / diff_len_sq));
+            }
+            Vec2 attract_direction = vec2_flip(vec2_norm(*offset));
+            Vec2 attract = vec2_scale(attract_direction, ATTRACT_MULTIPLIER);
+//                printf("Attract vec: %f, %f\n", attract.x, attract.y);
+//                printf("Repel vec: %f, %f\n\n", repel.x, repel.y);
+
+            *offset = vec2_add(*offset, repel);
+            *offset = vec2_add(*offset, attract);
+        }
+    }
+
+    return result;
+}
+
 void command_units(GameState *gs) {
     if(gs->resources.mouse_buttons[RIGHT_MOUSE_BUTTON] || gs->resources.keys[ALLEGRO_KEY_A]) {
-        Vec2 mean_position = vec2_make(0, 0);
-        int unit_count = 0;
-
         vec_int_clear(units_selected);
 
 
@@ -279,72 +344,12 @@ void command_units(GameState *gs) {
             Transform t = vec_Transform_get(gs->transform_components, entity);
             if(t.exists && ue.exists) {
                 vec_int_push(units_selected, entity);
-                unit_count++;
-                mean_position = vec2_add(mean_position, t.position);
             }
         }
 
-        if(unit_count == 0) return;
+        if(VEC_LEN(units_selected) == 0) return;
 
-        mean_position = vec2_scale(mean_position, 1.0 / unit_count);
-
-        // calculate the center unit
-        int center_unit;
-        float closest_dist = INFINITY;
-        for (int i = 0; i < VEC_LEN(units_selected); ++i) {
-            int entity = vec_int_get(units_selected, i);
-            Transform t = vec_Transform_get(gs->transform_components, entity);
-            if(vec2_length(vec2_sub(mean_position, t.position)) < closest_dist) {
-                closest_dist = vec2_length(vec2_sub(mean_position, t.position));
-                center_unit = entity;
-            }
-        }
-
-        Transform center_transform = vec_Transform_get(gs->transform_components, center_unit);
-        Vector_Vec2 offsets = vec_Vec2_with_capacity(VEC_LEN(units_selected));
-
-        for (int i = 0; i < VEC_LEN(units_selected); ++i) {
-            int entity = vec_int_get(units_selected, i);
-            Transform t = vec_Transform_get(gs->transform_components, entity);
-
-            Vec2 offset = vec2_sub(center_transform.position, t.position);
-            vec_Vec2_push(offsets, offset);
-        }
-
-        for (int i = 0; i < GROUPING_ITERATIONS; ++i) {
-            for (int j = 0; j < VEC_LEN(units_selected); ++j) {
-                Vec2* offset = vec_Vec2_get_ptr(offsets, j);
-                if(offset->x == 0 && offset->y == 0) {
-                    continue;
-                }
-                Vec2 dir_to_center = vec2_norm(vec2_flip(*offset));
-
-                //calculate repel vector
-                Vec2 repel = vec2_make(0, 0);
-                for (int k = 0; k < VEC_LEN(units_selected); ++k) {
-                    Vec2* other = vec_Vec2_get_ptr(offsets, k);
-                    if(other == offset) continue;
-
-                    Vec2 diff = vec2_sub(*offset, *other);
-                    float diff_len_sq = vec2_length_sq(diff);
-                    if(diff_len_sq == 0) continue;
-
-                    Vec2 direction = vec2_norm(diff);
-                    repel = vec2_add(repel, vec2_scale(direction, REPEL_MULTIPLIER / diff_len_sq));
-                }
-                Vec2 attract_direction = vec2_flip(vec2_norm(*offset));
-                Vec2 attract = vec2_scale(attract_direction, ATTRACT_MULTIPLIER);
-//                printf("Attract vec: %f, %f\n", attract.x, attract.y);
-//                printf("Repel vec: %f, %f\n\n", repel.x, repel.y);
-
-                *offset = vec2_add(*offset, repel);
-                *offset = vec2_add(*offset, attract);
-            }
-        }
-
-
-
-
+        Vector_Vec2 offsets = calculate_group_offsets(gs, units_selected);
         for (int i = 0; i < VEC_LEN(units_selected); ++i) {
 //            printf("command issued to unit %d\n", i);
             int entity = vec_int_get(units_selected, i);

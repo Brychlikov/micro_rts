@@ -74,5 +74,7 @@ void process_overdrive(GameState* gs);
 
 int target_unit(GameState* gs, int targeting, Vector_int targetables, float max_range);
 
+Vector_Vec2 calculate_group_offsets(GameState* gs, Vector_int units);
+
 
 #endif //_RTS_UNIT_H
