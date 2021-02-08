@@ -378,6 +378,21 @@ void process_overdrive(GameState *gs) {
         }
     }
 
+    if(gs->resources.game.player_balance < 0) {  // player ran out of money
+        // disable all overdrives and punish units
+        for (int i = 0; i < VEC_LEN(gs->resources.overdrive.units); ++i) {
+            int entity = vec_int_get(gs->resources.overdrive.units, i);
+            UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
+            Health* h = vec_Health_get_ptr(gs->health_components, entity);
+            uc->overdrive = false;
+            h->points = 10;  // probably enough to just set it to 10 hp
+            // it is *theoretically* possible that it would heal a unit
+            // ... but a player pulls that off, they should be rewarded for their ingenuity
+
+            // overdrive vector will be cleaned up at the end of the function
+        }
+    }
+
     if(gs->resources.keys[ALLEGRO_KEY_E] & KEY_UNPROCESSED) {
 
         bool any_overdriven = false;
@@ -418,19 +433,20 @@ void process_overdrive(GameState *gs) {
             }
         }
 
-        Vector_int new_overdrives =  vec_int_new();
-        for (int i = 0; i < VEC_LEN(gs->resources.overdrive.units); ++i) {
-            int entity = vec_int_get(gs->resources.overdrive.units, i);
-            UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
-            bool alive =  vec_bool_get(gs->entities, entity);
-            if(alive && uc->overdrive) {
-                vec_int_push(new_overdrives, entity);
-            }
-        }
-        vec_int_destroy(gs->resources.overdrive.units);
-        gs->resources.overdrive.units = new_overdrives;
     }
-
+    // clean up the overdrive vector:
+    // remove dead and non-overdriven units
+    Vector_int new_overdrives =  vec_int_new();
+    for (int i = 0; i < VEC_LEN(gs->resources.overdrive.units); ++i) {
+        int entity = vec_int_get(gs->resources.overdrive.units, i);
+        UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
+        bool alive =  vec_bool_get(gs->entities, entity);
+        if(alive && uc->overdrive) {
+            vec_int_push(new_overdrives, entity);
+        }
+    }
+    vec_int_destroy(gs->resources.overdrive.units);
+    gs->resources.overdrive.units = new_overdrives;
 }
 
 // copy pasted from enemy.c :/
