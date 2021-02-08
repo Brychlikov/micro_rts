@@ -78,11 +78,15 @@ void prep_redraw(GameState* gs) {
         gs->resources.paused = !gs->resources.paused;
     }
 
+    if(gs->resources.keys[ALLEGRO_KEY_SPACE] & KEY_UNPROCESSED) {
+        gs->resources.game_begun = true;
+    }
+
     if(gs->resources.last_frame_timestamp.tv_sec == 0) {  // first frame of the game
         gs->resources.time_delta = 1.0/60;
     }
     else {
-        if(gs->resources.paused) {
+        if(gs->resources.paused || !gs->resources.game_begun) {
             gs->resources.time_delta = 0;
         }
         else {
@@ -99,6 +103,53 @@ void render_pause_ui(GameState* gs) {
         int screen_width = al_get_display_width(gs->display);
         al_draw_filled_rectangle(0, 0, screen_width, screen_height, al_map_rgba_f(0, 0, 0, 0.9));
         al_draw_text(gs->font, al_map_rgb(255, 255, 255), screen_width / 2, screen_height / 2, ALLEGRO_ALIGN_CENTRE, "Game paused. Press P to unpause.");
+    }
+}
+
+void render_entry_ui(GameState* gs) {
+    if(!gs->resources.game_begun) {
+        int screen_height = al_get_display_height(gs->display);
+        int screen_width = al_get_display_width(gs->display);
+        al_draw_filled_rectangle(0, 0, screen_width, screen_height, al_map_rgba_f(0, 0, 0, 0.9));
+        al_draw_multiline_text(
+                gs->font,
+                al_map_rgb(255, 255, 255),
+                screen_width / 2 - 150, screen_height / 2,
+                300, 20,
+                ALLEGRO_ALIGN_LEFT,
+                "Overdrive\nControls: TODO\n\nPress SPACE to begin");
+    }
+}
+
+void render_end_ui(GameState* gs) {
+    if(gs->resources.game_ended) {
+        int screen_height = al_get_display_height(gs->display);
+        int screen_width = al_get_display_width(gs->display);
+        al_draw_filled_rectangle(0, 0, screen_width, screen_height, al_map_rgba_f(0, 0, 0, 0.9));
+        al_draw_multiline_text(
+                gs->font,
+                al_map_rgb(255, 255, 255),
+                screen_width / 2 - 150, screen_height / 2,
+                300, 20,
+                ALLEGRO_ALIGN_LEFT,
+                gs->resources.victory ? "Victory!" : "Defeat.");
+    }
+
+}
+
+void process_game_end(GameState* gs) {
+    if(!gs->resources.game_ended) {
+        bool player_alive = vec_bool_get(gs->entities, gs->resources.game.player_base);
+        bool enemy_alive = vec_bool_get(gs->entities, gs->resources.game.enemy_base);
+
+        if(!enemy_alive) {
+            gs->resources.game_ended = true;
+            gs->resources.victory = true;
+        }
+        else if(!player_alive) {
+            gs->resources.game_ended = true;
+            gs->resources.victory = false;
+        }
     }
 }
 
@@ -165,8 +216,11 @@ PURE_SYSTEM redraw_fns[] = {
         draw_healthbars,
         command_units,
         process_income,
+        process_game_end,
+        render_entry_ui,
         render_pause_ui,
         render_balance,
+        render_end_ui,
 
         reset_keys, // these should always be last
         reset_mouse_buttons,

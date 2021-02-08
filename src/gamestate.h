@@ -38,6 +38,10 @@ typedef struct GameState{
 
         Vec2 mouse_position;
 
+        bool game_begun;
+        bool game_ended;
+        bool victory;
+
         bool paused;
         float time_delta;
         struct timespec last_frame_timestamp;
