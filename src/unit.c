@@ -398,17 +398,6 @@ void command_units(GameState *gs) {
 }
 
 void process_overdrive(GameState *gs) {
-    if(gs->resources.keys[ALLEGRO_KEY_ESCAPE]) {
-        gs->resources.overdrive.active = false;
-
-        for (int i = 0; i < VEC_LEN(gs->resources.overdrive.units); ++i) {
-            int entity = vec_int_get(gs->resources.overdrive.units, i);
-            UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
-            uc->overdrive = false;
-            vec_int_clear(gs->resources.overdrive.units);
-        }
-    }
-
     if(gs->resources.game.player_balance < 0) {  // player ran out of money
         // disable all overdrives and punish units
         for (int i = 0; i < VEC_LEN(gs->resources.overdrive.units); ++i) {
@@ -428,16 +417,18 @@ void process_overdrive(GameState *gs) {
 
         bool any_overdriven = false;
         bool all_overdriven = true;
+        printf("in overdrive\n");
         for (int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
             int entity = vec_int_get(gs->resources.selection.entities_selected, i);
             UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
-            if(uc->overdrive) {
+            if(uc->exists && uc->overdrive) {
                 any_overdriven = true;
             }
-            else {
+            else if(uc->exists){
                 all_overdriven = false;
             }
         }
+        printf("all_overdriven: %d\n", all_overdriven);
 
         if(all_overdriven) { // disable overdrives
             for (int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
