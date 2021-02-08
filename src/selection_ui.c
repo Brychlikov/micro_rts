@@ -40,6 +40,7 @@ void selection_system(GameState* gs) {
     if(gs->resources.selection.in_progress && !(gs->resources.mouse_buttons[LEFT_MOUSE_BUTTON] & MOUSE_KEY_HELD)) {
         gs->resources.selection.in_progress = false;
         gs->resources.selection.area.br = gs->resources.mouse_position;
+        gs->resources.selection.area = rect_norm(gs->resources.selection.area);
 
 
         vec_int_clear(gs->resources.selection.entities_selected);

@@ -82,3 +82,17 @@ Collision rect_collide(Rect r1, Rect r2) {
     return COLLISION;
 }
 
+Rect rect_norm(Rect r) {
+    Rect result;
+    float xmin, ymin, xmax, ymax;
+    xmin = r.br.x < r.tl.x ? r.br.x : r.tl.x;
+    xmax = r.br.x > r.tl.x ? r.br.x : r.tl.x;
+    ymin = r.br.y < r.tl.y ? r.br.y : r.tl.y;
+    ymax = r.br.y > r.tl.y ? r.br.y : r.tl.y;
+    result.tl.x = xmin;
+    result.tl.y = ymin;
+    result.br.x = xmax;
+    result.br.y = ymax;
+    return result;
+}
+

@@ -53,6 +53,8 @@ float vec2_length_sq(Vec2 v);
 
 Vec2 vec2_norm(Vec2 v);
 
+Rect rect_norm(Rect r);
+
 Rect rect_local_to_global(Rect r, Transform entity_transform);
 
 Collision rect_collide(Rect r1, Rect r2);
