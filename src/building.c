@@ -9,6 +9,8 @@
 #include "health.h"
 #include "coord_utils.h"
 
+GENERATE_VECTOR_DEFINITION(BuildingComponent)
+
 
 
 int create_building(GameState* gs, Vec2 position, float scale, int max_hp, int team) {
@@ -57,5 +59,46 @@ int create_building(GameState* gs, Vec2 position, float scale, int max_hp, int t
     };
 
     *vec_Collider_get_ptr(gs->collider_components, new) = c;
+
+    BuildingComponent bc = {
+            .exists=true,
+            .under_attack=false,
+            .time_from_attack=0,
+            .last_attack_hp=h.points,
+            .entity=new,
+    };
+    *vec_BuildingComponent_get_ptr(gs->building_components, new) = bc;
+
     return new;
+}
+
+void deinit_buildings(GameState *gs) {
+    vec_BuildingComponent_destroy(gs->building_components);
+}
+
+void init_buildings(GameState *gs) {
+    gs->building_components = vec_BuildingComponent_new();
+}
+
+void process_buildings(GameState *gs) {
+    for (int entity = 0; entity < VEC_LEN(gs->entities); ++entity) {
+        bool alive = vec_bool_get(gs->entities, entity);
+        BuildingComponent* bc = vec_BuildingComponent_get_ptr(gs->building_components, entity);
+
+        if(alive && bc->exists) {
+            if(bc->under_attack)
+                bc->time_from_attack += gs->resources.time_delta;
+
+            Health h = vec_Health_get(gs->health_components, entity);
+            if (h.points < bc->last_attack_hp) {
+                bc->under_attack = true;
+                bc->time_from_attack = 0;
+                bc->last_attack_hp = h.points;
+            }
+
+            if(bc->time_from_attack > 5) {
+                bc->under_attack = false;
+            }
+        }
+    }
 }

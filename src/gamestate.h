@@ -14,6 +14,7 @@
 #include "collider.h"
 #include "health.h"
 #include "bullet.h"
+#include "building.h"
 #include "laser_turret.h"
 #include <allegro5/allegro_font.h>
 
@@ -104,6 +105,7 @@ typedef struct GameState{
     Vector_Health health_components;
     Vector_BulletComponent bullet_components;
     Vector_LaserTurretComponent laser_turret_components;
+    Vector_BuildingComponent building_components;
 
 } GameState;
 

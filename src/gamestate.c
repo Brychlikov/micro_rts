@@ -152,6 +152,7 @@ int create_entity(GameState* gs) {
     vec_Health_push_zero(gs->health_components);
     vec_BulletComponent_push_zero(gs->bullet_components);
     vec_LaserTurretComponent_push_zero(gs->laser_turret_components);
+    vec_BuildingComponent_push_zero(gs->building_components);
 
     // add empty CollisionData element too
     CollisionData cd = {.entity=-1, .next=NULL};

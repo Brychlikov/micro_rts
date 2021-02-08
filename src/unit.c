@@ -198,6 +198,9 @@ void advance_units(GameState *gs) {
                     unit->sm.aggressive.next_dest = prev_dest;
                     break;
                 }
+                if(my_transform->position.x == unit->sm.a_move.dest.x && my_transform->position.y == unit->sm.a_move.dest.y) {
+                    unit->sm.state = WATCH;
+                }
                 // here we depend on move and a_move structs inside UnitStateMachine having the same layout
                 // if no target found, proceed to MOVE
             case MOVE:
@@ -216,6 +219,10 @@ void advance_units(GameState *gs) {
                 float angle = atan2f(delta.y, delta.x);
                 my_transform->position = vec2_add(my_transform->position, delta);
                 my_transform->rotation = angle;
+
+                if(my_transform->position.x == unit->sm.a_move.dest.x && my_transform->position.y == unit->sm.a_move.dest.y) {
+                    unit->sm.state = IDLE;
+                }
                 break;
             case AGGRESSIVE:
                 ;
@@ -280,8 +287,8 @@ Vector_Vec2 calculate_group_offsets(GameState *gs, Vector_int units) {
     // calculate the center unit
     int center_unit;
     float closest_dist = INFINITY;
-    for (int i = 0; i < VEC_LEN(units_selected); ++i) {
-        int entity = vec_int_get(units_selected, i);
+    for (int i = 0; i < VEC_LEN(units); ++i) {
+        int entity = vec_int_get(units, i);
         Transform t = vec_Transform_get(gs->transform_components, entity);
         if(vec2_length(vec2_sub(mean_position, t.position)) < closest_dist) {
             closest_dist = vec2_length(vec2_sub(mean_position, t.position));
@@ -291,8 +298,8 @@ Vector_Vec2 calculate_group_offsets(GameState *gs, Vector_int units) {
 
     Transform center_transform = vec_Transform_get(gs->transform_components, center_unit);
 
-    for (int i = 0; i < VEC_LEN(units_selected); ++i) {
-        int entity = vec_int_get(units_selected, i);
+    for (int i = 0; i < VEC_LEN(units); ++i) {
+        int entity = vec_int_get(units, i);
         Transform t = vec_Transform_get(gs->transform_components, entity);
 
         Vec2 offset = vec2_sub(center_transform.position, t.position);
@@ -300,7 +307,7 @@ Vector_Vec2 calculate_group_offsets(GameState *gs, Vector_int units) {
     }
 
     for (int i = 0; i < GROUPING_ITERATIONS; ++i) {
-        for (int j = 0; j < VEC_LEN(units_selected); ++j) {
+        for (int j = 0; j < VEC_LEN(units); ++j) {
             Vec2* offset = vec_Vec2_get_ptr(result, j);
             if(offset->x == 0 && offset->y == 0) {
                 continue;
@@ -309,7 +316,7 @@ Vector_Vec2 calculate_group_offsets(GameState *gs, Vector_int units) {
 
             //calculate repel vector
             Vec2 repel = vec2_make(0, 0);
-            for (int k = 0; k < VEC_LEN(units_selected); ++k) {
+            for (int k = 0; k < VEC_LEN(units); ++k) {
                 Vec2* other = vec_Vec2_get_ptr(result, k);
                 if(other == offset) continue;
 
@@ -333,7 +340,7 @@ Vector_Vec2 calculate_group_offsets(GameState *gs, Vector_int units) {
     return result;
 }
 
-void move_units(GameState* gs, Vector_int units) {
+void move_units(GameState *gs, Vector_int units, Vec2 dest) {
     Vector_Vec2 offsets = calculate_group_offsets(gs, units);
 
     for (int i = 0; i < VEC_LEN(units); ++i) {
@@ -344,12 +351,12 @@ void move_units(GameState* gs, Vector_int units) {
         assert(ue->exists);
 
         ue->sm.state = MOVE;
-        ue->sm.move.dest = vec2_sub(gs->resources.mouse_position, offset);
+        ue->sm.move.dest = vec2_sub(dest, offset);
     }
     vec_Vec2_destroy(offsets);
 }
 
-void a_move_units(GameState* gs, Vector_int units) {
+void a_move_units(GameState *gs, Vector_int units, Vec2 dest) {
     Vector_Vec2 offsets = calculate_group_offsets(gs, units);
 
     for (int i = 0; i < VEC_LEN(units); ++i) {
@@ -360,7 +367,7 @@ void a_move_units(GameState* gs, Vector_int units) {
         assert(ue->exists);
 
         ue->sm.state = A_MOVE;
-        ue->sm.a_move.dest = vec2_sub(gs->resources.mouse_position, offset);
+        ue->sm.a_move.dest = vec2_sub(dest, offset);
     }
     vec_Vec2_destroy(offsets);
 }
@@ -382,10 +389,10 @@ void command_units(GameState *gs) {
         if(VEC_LEN(units_selected) == 0) return;
 
         if(gs->resources.keys[ALLEGRO_KEY_A]) {
-            a_move_units(gs, units_selected);
+            a_move_units(gs, units_selected, gs->resources.mouse_position);
         }
         else {
-            move_units(gs, units_selected);
+            move_units(gs, units_selected, gs->resources.mouse_position);
         }
     }
 }
