@@ -333,6 +333,38 @@ Vector_Vec2 calculate_group_offsets(GameState *gs, Vector_int units) {
     return result;
 }
 
+void move_units(GameState* gs, Vector_int units) {
+    Vector_Vec2 offsets = calculate_group_offsets(gs, units);
+
+    for (int i = 0; i < VEC_LEN(units); ++i) {
+        int entity = vec_int_get(units, i);
+        Vec2 offset = vec_Vec2_get(offsets, i);
+
+        UnitComponent* ue = vec_UnitComponent_get_ptr(gs->unit_components, entity);
+        assert(ue->exists);
+
+        ue->sm.state = MOVE;
+        ue->sm.move.dest = vec2_sub(gs->resources.mouse_position, offset);
+    }
+    vec_Vec2_destroy(offsets);
+}
+
+void a_move_units(GameState* gs, Vector_int units) {
+    Vector_Vec2 offsets = calculate_group_offsets(gs, units);
+
+    for (int i = 0; i < VEC_LEN(units); ++i) {
+        int entity = vec_int_get(units, i);
+        Vec2 offset = vec_Vec2_get(offsets, i);
+
+        UnitComponent* ue = vec_UnitComponent_get_ptr(gs->unit_components, entity);
+        assert(ue->exists);
+
+        ue->sm.state = A_MOVE;
+        ue->sm.a_move.dest = vec2_sub(gs->resources.mouse_position, offset);
+    }
+    vec_Vec2_destroy(offsets);
+}
+
 void command_units(GameState *gs) {
     if(gs->resources.mouse_buttons[RIGHT_MOUSE_BUTTON] || gs->resources.keys[ALLEGRO_KEY_A]) {
         vec_int_clear(units_selected);
@@ -349,25 +381,12 @@ void command_units(GameState *gs) {
 
         if(VEC_LEN(units_selected) == 0) return;
 
-        Vector_Vec2 offsets = calculate_group_offsets(gs, units_selected);
-        for (int i = 0; i < VEC_LEN(units_selected); ++i) {
-//            printf("command issued to unit %d\n", i);
-            int entity = vec_int_get(units_selected, i);
-            Vec2 offset = vec_Vec2_get(offsets, i);
-
-            UnitComponent* ue = vec_UnitComponent_get_ptr(gs->unit_components, entity);
-            assert(ue->exists);
-
-            if(gs->resources.keys[ALLEGRO_KEY_A]) {  // A_MOVE
-                ue->sm.state = A_MOVE;
-                ue->sm.a_move.dest = vec2_sub(gs->resources.mouse_position, offset);
-            }
-            else {  // MOVE
-                ue->sm.state = MOVE;
-                ue->sm.move.dest = vec2_sub(gs->resources.mouse_position, offset);
-            }
+        if(gs->resources.keys[ALLEGRO_KEY_A]) {
+            a_move_units(gs, units_selected);
         }
-        vec_Vec2_destroy(offsets);
+        else {
+            move_units(gs, units_selected);
+        }
     }
 }
 
