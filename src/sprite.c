@@ -51,7 +51,7 @@ void deinit_sprites(GameState *gs) {
 }
 
 void draw_sprites(GameState* gs) {
-    for (int i = 0; i < VEC_LEN(gs->sprite_components); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(gs->sprite_components); ++i) {
         // for now assert that every entity with sprite has a valid transform
         Sprite s = vec_Sprite_get(gs->sprite_components, i);
         if(vec_bool_get(gs->entities, i)) {  // if entity still alive

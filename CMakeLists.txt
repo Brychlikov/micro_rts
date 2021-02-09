@@ -2,9 +2,11 @@ cmake_minimum_required(VERSION 3.16)
 project(micro_rts C)
 
 set(CMAKE_C_STANDARD 11)
+add_compile_options(-Wall -Wextra -Werror)
 
 find_package(PkgConfig REQUIRED)
 
+# uncomment this to enable collider drawing
 # add_compile_definitions(DEBUG_COLLIDERS)
 
 pkg_check_modules(ALLEGRO REQUIRED allegro-5 allegro_font-5 allegro_primitives-5 allegro_image-5 allegro_ttf-5)

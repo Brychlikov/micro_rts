@@ -12,7 +12,7 @@
 #include "colors.h"
 
 void draw_healthbars(GameState *gs) {
-    for (int entity = 0; entity < VEC_LEN(gs->entities); ++entity) {
+    for (unsigned int entity = 0; entity < VEC_LEN(gs->entities); ++entity) {
         bool alive = vec_bool_get(gs->entities, entity);
         Transform t = vec_Transform_get(gs->transform_components, entity);
         Health h = vec_Health_get(gs->health_components, entity);

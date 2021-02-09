@@ -215,7 +215,7 @@ void process_game_end(GameState* gs) {
 }
 
 void print_collisions(GameState* gs) {
-    for (int i = 0; i < VEC_LEN(gs->resources.collisions.vec); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(gs->resources.collisions.vec); ++i) {
         CollisionData* cd = vec_CollisionData_get_ptr(gs->resources.collisions.vec, i);
         if(cd->entity == -1) continue;
         printf("Collisions of entity %d:\n", i);
@@ -306,12 +306,12 @@ PURE_SYSTEM deinit_fns[] = {
 
 void reset_game(GameState* gs) {
     // run all deinits, exccept of allegro
-    for (int i = 1; i < FUNARR_LEN(deinit_fns); ++i) {
+    for (unsigned int i = 1; i < FUNARR_LEN(deinit_fns); ++i) {
         deinit_fns[i](gs);
     }
     gs->resources.game_begun = false;
     gs->resources.game_ended = false;
-    for (int i = 3; i < FUNARR_LEN(init_fns); ++i) {
+    for (unsigned int i = 3; i < FUNARR_LEN(init_fns); ++i) {
         init_fns[i](gs);
     }
 }
@@ -325,7 +325,7 @@ int main()
     gs.resources.selection.in_progress = false;
 //    GameState gs = {.during_selection=false, .selection_area={.tl={.x=0, .y=0}, .br={.x=100, .y=100}}};
 
-    for (int i = 0; i < FUNARR_LEN(init_fns); ++i) {
+    for (unsigned int i = 0; i < FUNARR_LEN(init_fns); ++i) {
         init_fns[i](&gs);
     }
 
@@ -337,14 +337,14 @@ int main()
     {
         al_wait_for_event(gs.queue, &event);
 
-        for (int i = 0; i < FUNARR_LEN(event_fns); ++i) {
+        for (unsigned int i = 0; i < FUNARR_LEN(event_fns); ++i) {
             event_fns[i](&gs, event);
         }
 
         if(gs.redraw && al_is_event_queue_empty(gs.queue))
         {
 
-            for (int i = 0; i < FUNARR_LEN(redraw_fns); ++i) {
+            for (unsigned int i = 0; i < FUNARR_LEN(redraw_fns); ++i) {
                 if(i < 3 || gs.resources.game_begun)  // only the first three functions are safe to call before game init
                     redraw_fns[i](&gs);
             }
@@ -355,7 +355,7 @@ int main()
         }
     }
 
-    for (int i = 0; i < FUNARR_LEN(deinit_fns); ++i) {
+    for (unsigned int i = 0; i < FUNARR_LEN(deinit_fns); ++i) {
         deinit_fns[i](&gs);
     }
 

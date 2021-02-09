@@ -102,7 +102,7 @@ void deinit_game(GameState *gs) {
 void update_income_values(GameState *gs) {
     if(!gs->resources.game_begun) return;
     float player_income = PLAYER_BASE_INCOME;
-    for (int i = 0; i < VEC_LEN(gs->resources.game.player_auxiliary_bases); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(gs->resources.game.player_auxiliary_bases); ++i) {
         int entity = vec_int_get(gs->resources.game.player_auxiliary_bases, i);
         bool alive = vec_bool_get(gs->entities, entity);
         if(alive) {
@@ -112,7 +112,7 @@ void update_income_values(GameState *gs) {
 
     // add overdrive cost
     int count = 0;
-    for (int i = 0; i < VEC_LEN(gs->resources.overdrive.units); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(gs->resources.overdrive.units); ++i) {
         int entity = vec_int_get(gs->resources.overdrive.units, i);
         count += vec_bool_get(gs->entities, entity) ? 1 : 0;
     }
@@ -120,7 +120,7 @@ void update_income_values(GameState *gs) {
     player_income -= count * OVERDRIVE_COST;
 
     float enemy_income = PLAYER_BASE_INCOME;
-    for (int i = 0; i < VEC_LEN(gs->resources.game.enemy_auxiliary_bases); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(gs->resources.game.enemy_auxiliary_bases); ++i) {
         int entity = vec_int_get(gs->resources.game.enemy_auxiliary_bases, i);
         bool alive = vec_bool_get(gs->entities, entity);
         if(alive) {

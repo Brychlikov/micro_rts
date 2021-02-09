@@ -25,7 +25,7 @@ ALLEGRO_COLOR color_code_to_allegro(const char *s) {
     return al_map_rgb(red, green, blue);
 }
 
-void init_tints(GameState* gs) {
+void init_tints(__attribute__((unused)) GameState* gs) {
     selected_tint = color_code_to_allegro(SELECTED_COLOR);
     enemy_tint = color_code_to_allegro(ENEMY_COLOR);
     overdrive_tint = color_code_to_allegro(OVERDRIVE_COLOR);
@@ -33,7 +33,7 @@ void init_tints(GameState* gs) {
 }
 
 void tint_sprites(GameState *gs) {
-    for (int entity = 0; entity < VEC_LEN(gs->entities); ++entity) {
+    for (unsigned int entity = 0; entity < VEC_LEN(gs->entities); ++entity) {
         Sprite* s = vec_Sprite_get_ptr(gs->sprite_components, entity);
         if(!s->exists) continue;
         Health h = vec_Health_get(gs->health_components, entity);
@@ -42,7 +42,7 @@ void tint_sprites(GameState *gs) {
 
         s->tint = pure_tint;
 
-        if(h.exists && h.team == ENEMY_TEAM || bc.exists && bc.team == ENEMY_TEAM) {
+        if((h.exists && h.team == ENEMY_TEAM)|| (bc.exists && bc.team == ENEMY_TEAM)) {
             s->tint = enemy_tint;
         }
 

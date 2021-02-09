@@ -32,7 +32,7 @@ void deinit_colliders(GameState *gs) {
     vec_Collider_destroy(gs->collider_components);
 
     //free collision data
-    for (int i = 0; i < VEC_LEN(gs->resources.collisions.vec); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(gs->resources.collisions.vec); ++i) {
         CollisionData* c_ptr = vec_CollisionData_get_ptr(gs->resources.collisions.vec, i);
         free_collision_data_children(c_ptr);
     }
@@ -71,7 +71,7 @@ void push_collision(CollisionData* cd, int entity) {
 }
 
 void draw_colliders(GameState *gs) {
-    for (int i = 0; i < VEC_LEN(gs->entities); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(gs->entities); ++i) {
         bool alive = vec_bool_get(gs->entities, i);
         Collider c = vec_Collider_get(gs->collider_components, i);
         Transform t = vec_Transform_get(gs->transform_components, i);
@@ -85,7 +85,7 @@ void draw_colliders(GameState *gs) {
 
 void check_collisions(GameState* gs) {
     // begin by freeing previous collisions
-    for (int i = 0; i < VEC_LEN(gs->resources.collisions.vec); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(gs->resources.collisions.vec); ++i) {
         CollisionData* c_ptr = vec_CollisionData_get_ptr(gs->resources.collisions.vec, i);
         free_collision_data_children(c_ptr);
         c_ptr->next = NULL;
@@ -93,21 +93,21 @@ void check_collisions(GameState* gs) {
     }
 
     Vector_int collidables = vec_int_with_capacity(128);
-    for (int i = 0; i < VEC_LEN(gs->entities); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(gs->entities); ++i) {
         Collider c = vec_Collider_get(gs->collider_components, i);
         if(c.exists) {
             vec_int_push(collidables, i);
         }
     }
 
-    for (int i = 0; i < VEC_LEN(collidables); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(collidables); ++i) {
         int entity1 = vec_int_get(collidables, i);
         Collider c1 = vec_Collider_get(gs->collider_components, entity1);
         Rect rect1 = c1.rect;
         Transform t = vec_Transform_get(gs->transform_components, entity1);
         if(t.exists) rect1 = rect_local_to_global(rect1, t);
 
-        for (int j = 0; j < VEC_LEN(collidables); ++j) {
+        for (unsigned int j = 0; j < VEC_LEN(collidables); ++j) {
             if(i >= j) continue;
             int entity2 = vec_int_get(collidables, j);
 

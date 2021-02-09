@@ -25,7 +25,7 @@ void update_mouse (GameState * gs, ALLEGRO_EVENT event) {
     }
 }
 void reset_mouse_buttons(GameState* gs) {
-    for (int i = 0; i < sizeof(gs->resources.mouse_buttons); ++i) {
+    for (unsigned int i = 0; i < sizeof(gs->resources.mouse_buttons); ++i) {
         gs->resources.mouse_buttons[i] &= ~MOUSE_KEY_UNPROCESSED;
     }
 }

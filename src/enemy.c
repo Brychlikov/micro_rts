@@ -30,7 +30,7 @@ int check_if_building_needs_help(GameState* gs) {
         return gs->resources.game.enemy_base;
     }
 
-    for (int i = 0; i < VEC_LEN(gs->resources.game.enemy_auxiliary_bases); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(gs->resources.game.enemy_auxiliary_bases); ++i) {
         int entity = vec_int_get(gs->resources.game.enemy_auxiliary_bases, i);
         bool alive = vec_bool_get(gs->entities, entity);
         BuildingComponent aux_bc = vec_BuildingComponent_get(gs->building_components, entity);
@@ -63,7 +63,7 @@ void process_enemy(GameState* gs) {
     
     Vector_int idle_units = vec_int_new();
     Vector_int alive_units = vec_int_new();
-    for (int i = 0; i < VEC_LEN(gs->resources.enemy.units); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(gs->resources.enemy.units); ++i) {
         int entity = vec_int_get(gs->resources.enemy.units, i);
         bool alive = vec_bool_get(gs->entities, entity);
         UnitComponent uc = vec_UnitComponent_get(gs->unit_components, entity);
@@ -84,7 +84,7 @@ void process_enemy(GameState* gs) {
 
     if(VEC_LEN(idle_units) >= SIEGE_CAP && building_to_help == -1){
         int player_aux_bases_count = 0;
-        for (int i = 0; i < VEC_LEN(gs->resources.game.player_auxiliary_bases); ++i) {
+        for (unsigned int i = 0; i < VEC_LEN(gs->resources.game.player_auxiliary_bases); ++i) {
             int entity = vec_int_get(gs->resources.game.player_auxiliary_bases, i);
             player_aux_bases_count += vec_bool_get(gs->entities, entity) ? 1 : 0;
         }
@@ -100,7 +100,7 @@ void process_enemy(GameState* gs) {
         else {
             int chosen = choice - 3;
             Vec2 target_base_position;
-            for (int i = 0; i < VEC_LEN(gs->resources.game.player_auxiliary_bases); ++i) {
+            for (unsigned int i = 0; i < VEC_LEN(gs->resources.game.player_auxiliary_bases); ++i) {
                 int entity = vec_int_get(gs->resources.game.player_auxiliary_bases, i);
                 bool alive=  vec_bool_get(gs->entities, entity);
                 if(alive) {

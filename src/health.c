@@ -16,7 +16,7 @@ void deinit_health(GameState *gs) {
 }
 
 void health_system(GameState* gs) {
-    for (int i = 0; i < VEC_LEN(gs->entities); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(gs->entities); ++i) {
         if(!vec_bool_get(gs->entities, i)) continue;
 
         Health h = vec_Health_get(gs->health_components, i);

@@ -15,7 +15,7 @@ void init_keyboard(GameState* gs) {
 }
 
 void reset_keys(GameState* gs) {
-    for (int i = 0; i < sizeof(gs->resources.keys); ++i) {
+    for (unsigned int i = 0; i < sizeof(gs->resources.keys); ++i) {
         gs->resources.keys[i] &= ~KEY_UNPROCESSED;
     }
 }

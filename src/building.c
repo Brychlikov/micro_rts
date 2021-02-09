@@ -81,7 +81,7 @@ void init_buildings(GameState *gs) {
 }
 
 void process_buildings(GameState *gs) {
-    for (int entity = 0; entity < VEC_LEN(gs->entities); ++entity) {
+    for (unsigned int entity = 0; entity < VEC_LEN(gs->entities); ++entity) {
         bool alive = vec_bool_get(gs->entities, entity);
         BuildingComponent* bc = vec_BuildingComponent_get_ptr(gs->building_components, entity);
 

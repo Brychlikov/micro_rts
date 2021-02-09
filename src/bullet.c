@@ -61,7 +61,7 @@ void create_bullet(GameState* gs, Transform t, int team, int damage) {
 }
 
 void process_bullets(GameState* gs) {
-    for (int i = 0; i < VEC_LEN(gs->entities); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(gs->entities); ++i) {
         BulletComponent bc = vec_BulletComponent_get(gs->bullet_components, i);
         bool alive = vec_bool_get(gs->entities, i);
         if(!alive || !bc.exists) continue;

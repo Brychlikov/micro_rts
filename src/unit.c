@@ -131,7 +131,7 @@ int target_unit(GameState *gs, int targeting, Vector_int targetables, float max_
     Health targeting_health = vec_Health_get(gs->health_components, targeting);
     assert(targeting_transform.exists);
 
-    for (int i = 0; i < VEC_LEN(targetables); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(targetables); ++i) {
         int entity = vec_int_get(targetables, i);
         Transform t = vec_Transform_get(gs->transform_components, entity);
         assert(t.exists);
@@ -151,7 +151,7 @@ int target_unit(GameState *gs, int targeting, Vector_int targetables, float max_
 void advance_units(GameState *gs) {
     // prepare vector of targetable entities:
     Vector_int targetables = vec_int_with_capacity(128);
-    for (int i = 0; i < VEC_LEN(gs->entities); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(gs->entities); ++i) {
         Transform t = vec_Transform_get(gs->transform_components, i);
         if(!t.exists) continue;
 
@@ -161,7 +161,7 @@ void advance_units(GameState *gs) {
         vec_int_push(targetables, i);
     }
 
-    for (int i = 0; i < VEC_LEN(gs->entities); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(gs->entities); ++i) {
         if(!vec_bool_get(gs->entities, i)) continue;
 
         UnitComponent* unit = vec_UnitComponent_get_ptr(gs->unit_components, i);
@@ -192,6 +192,7 @@ void advance_units(GameState *gs) {
                 }
                 // here we depend on move and a_move structs inside UnitStateMachine having the same layout
                 // if no target found, proceed to MOVE
+                __attribute__((fallthrough));
             case MOVE:
                 ;     // I hate this language sooooo much
                 Vec2 diff = vec2_sub(unit->sm.move.dest, my_transform->position);
@@ -263,7 +264,7 @@ Vector_Vec2 calculate_group_offsets(GameState *gs, Vector_int units) {
     Vector_Vec2 result = vec_Vec2_with_capacity(units.inner->length);
     Vec2 mean_position = vec2_make(0, 0);
 
-    for (int i = 0; i < VEC_LEN(units); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(units); ++i) {
         int entity = vec_int_get(units, i);
         Transform t = vec_Transform_get(gs->transform_components, entity);
         mean_position = vec2_add(mean_position, t.position);
@@ -274,7 +275,7 @@ Vector_Vec2 calculate_group_offsets(GameState *gs, Vector_int units) {
     // calculate the center unit
     int center_unit;
     float closest_dist = INFINITY;
-    for (int i = 0; i < VEC_LEN(units); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(units); ++i) {
         int entity = vec_int_get(units, i);
         Transform t = vec_Transform_get(gs->transform_components, entity);
         if(vec2_length(vec2_sub(mean_position, t.position)) < closest_dist) {
@@ -285,7 +286,7 @@ Vector_Vec2 calculate_group_offsets(GameState *gs, Vector_int units) {
 
     Transform center_transform = vec_Transform_get(gs->transform_components, center_unit);
 
-    for (int i = 0; i < VEC_LEN(units); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(units); ++i) {
         int entity = vec_int_get(units, i);
         Transform t = vec_Transform_get(gs->transform_components, entity);
 
@@ -294,16 +295,15 @@ Vector_Vec2 calculate_group_offsets(GameState *gs, Vector_int units) {
     }
 
     for (int i = 0; i < GROUPING_ITERATIONS; ++i) {
-        for (int j = 0; j < VEC_LEN(units); ++j) {
+        for (unsigned int j = 0; j < VEC_LEN(units); ++j) {
             Vec2* offset = vec_Vec2_get_ptr(result, j);
             if(offset->x == 0 && offset->y == 0) {
                 continue;
             }
-            Vec2 dir_to_center = vec2_norm(vec2_flip(*offset));
 
             //calculate repel vector
             Vec2 repel = vec2_make(0, 0);
-            for (int k = 0; k < VEC_LEN(units); ++k) {
+            for (unsigned int k = 0; k < VEC_LEN(units); ++k) {
                 Vec2* other = vec_Vec2_get_ptr(result, k);
                 if(other == offset) continue;
 
@@ -330,7 +330,7 @@ Vector_Vec2 calculate_group_offsets(GameState *gs, Vector_int units) {
 void move_units(GameState *gs, Vector_int units, Vec2 dest) {
     Vector_Vec2 offsets = calculate_group_offsets(gs, units);
 
-    for (int i = 0; i < VEC_LEN(units); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(units); ++i) {
         int entity = vec_int_get(units, i);
         Vec2 offset = vec_Vec2_get(offsets, i);
 
@@ -346,7 +346,7 @@ void move_units(GameState *gs, Vector_int units, Vec2 dest) {
 void a_move_units(GameState *gs, Vector_int units, Vec2 dest) {
     Vector_Vec2 offsets = calculate_group_offsets(gs, units);
 
-    for (int i = 0; i < VEC_LEN(units); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(units); ++i) {
         int entity = vec_int_get(units, i);
         Vec2 offset = vec_Vec2_get(offsets, i);
 
@@ -364,7 +364,7 @@ void command_units(GameState *gs) {
         vec_int_clear(units_selected);
 
 
-        for (int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
+        for (unsigned int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
             int entity = vec_int_get(gs->resources.selection.entities_selected, i);
             UnitComponent ue = vec_UnitComponent_get(gs->unit_components, entity);
             Transform t = vec_Transform_get(gs->transform_components, entity);
@@ -387,7 +387,7 @@ void command_units(GameState *gs) {
 void process_overdrive(GameState *gs) {
     if(gs->resources.game.player_balance < 0) {  // player ran out of money
         // disable all overdrives and punish units
-        for (int i = 0; i < VEC_LEN(gs->resources.overdrive.units); ++i) {
+        for (unsigned int i = 0; i < VEC_LEN(gs->resources.overdrive.units); ++i) {
             int entity = vec_int_get(gs->resources.overdrive.units, i);
             UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
             Health* h = vec_Health_get_ptr(gs->health_components, entity);
@@ -402,14 +402,12 @@ void process_overdrive(GameState *gs) {
 
     if(gs->resources.keys[ALLEGRO_KEY_E] & KEY_UNPROCESSED) {
 
-        bool any_overdriven = false;
         bool all_overdriven = true;
         printf("in overdrive\n");
-        for (int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
+        for (unsigned int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
             int entity = vec_int_get(gs->resources.selection.entities_selected, i);
             UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
             if(uc->exists && uc->overdrive) {
-                any_overdriven = true;
             }
             else if(uc->exists){
                 all_overdriven = false;
@@ -418,7 +416,7 @@ void process_overdrive(GameState *gs) {
         printf("all_overdriven: %d\n", all_overdriven);
 
         if(all_overdriven) { // disable overdrives
-            for (int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
+            for (unsigned int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
                 int entity = vec_int_get(gs->resources.selection.entities_selected, i);
 
                 UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
@@ -428,7 +426,7 @@ void process_overdrive(GameState *gs) {
             }
         }
         else {  // add new units to overdrive
-            for (int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
+            for (unsigned int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
                 int entity = vec_int_get(gs->resources.selection.entities_selected, i);
 
                 UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
@@ -446,7 +444,7 @@ void process_overdrive(GameState *gs) {
     // clean up the overdrive vector:
     // remove dead and non-overdriven units
     Vector_int new_overdrives =  vec_int_new();
-    for (int i = 0; i < VEC_LEN(gs->resources.overdrive.units); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(gs->resources.overdrive.units); ++i) {
         int entity = vec_int_get(gs->resources.overdrive.units, i);
         UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
         bool alive =  vec_bool_get(gs->entities, entity);

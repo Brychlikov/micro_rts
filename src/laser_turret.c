@@ -85,7 +85,7 @@ int create_laser_turret(GameState* gs, Vec2 position, int team) {
 
 void process_laser_turrets(GameState *gs) {
     Vector_int targetables = vec_int_with_capacity(128);
-    for (int i = 0; i < VEC_LEN(gs->entities); ++i) {
+    for (unsigned int i = 0; i < VEC_LEN(gs->entities); ++i) {
         Transform t = vec_Transform_get(gs->transform_components, i);
         if(!t.exists) continue;
 
@@ -95,12 +95,11 @@ void process_laser_turrets(GameState *gs) {
         vec_int_push(targetables, i);
     }
 
-    for (int entity = 0; entity < VEC_LEN(gs->entities); entity++) {
+    for (unsigned int entity = 0; entity < VEC_LEN(gs->entities); entity++) {
         if(!vec_bool_get(gs->entities, entity)) continue;
 
         LaserTurretComponent* ltc = vec_LaserTurretComponent_get_ptr(gs->laser_turret_components, entity);
         if(!ltc->exists) continue;
-        Health turret_health = vec_Health_get(gs->health_components, entity);
         Transform turret_transform = vec_Transform_get(gs->transform_components, entity);
 
         ltc->shot_cooldown -= gs->resources.time_delta;
