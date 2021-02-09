@@ -119,18 +119,8 @@ void init_components(GameState* gs);
 
 void deinit_components(GameState* gs);
 
-void init_game(GameState* gs);
-
-void deinit_game(GameState* gs);
-
 int create_entity(GameState* gs);
 
 void destroy_entity(GameState* gs, Entity entity);
-
-void update_income_values(GameState* gs);
-
-void process_income(GameState* gs);
-
-void render_balance(GameState* gs);
 
 #endif //_RTS_GAMESTATE_H

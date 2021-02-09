@@ -19,6 +19,7 @@
 #include "enemy.h"
 #include "tints.h"
 #include "colors.h"
+#include "game.h"
 
 #define FUNARR_LEN(arr) (sizeof(arr)/sizeof(size_t))
 
