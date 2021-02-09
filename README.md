@@ -11,7 +11,12 @@ To build this project you will need:
 - `cmake`
 - `pkg-config`
 
-In root directory of the project run:
+On Ubuntu, it should be enough to run
+```
+sudo apt install liballegro5.2 liballegro5-dev cmake pkg-config
+```
+
+After installing all the dependencies, run following commands in the root directory of the project:
 
 ```
 cmake .
