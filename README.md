@@ -2,7 +2,7 @@
 
 ## Compilation instructions
 
-This project depends on library `allegro5` To install it, follow instructions in the [official guide](https://github.com/liballeg/allegro_wiki/wiki/Quickstart).
+This project depends on library `allegro` (version `5.2.*`). To install it, follow instructions in the [official guide](https://github.com/liballeg/allegro_wiki/wiki/Quickstart).
 
 ### Build dependencies
 
