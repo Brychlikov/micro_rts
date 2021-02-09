@@ -1,4 +1,4 @@
-# micro_rts
+# Overdrive
 
 ## Compilation instructions
 
@@ -23,7 +23,7 @@ cmake .
 make
 ```
 
-Binary `micro_rts` should now be ready to run!
+Binary `overdrive` should now be ready to run!
 
 ## Gameplay
 

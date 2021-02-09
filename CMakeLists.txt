@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(micro_rts C)
+project(overdrive C)
 
 set(CMAKE_C_STANDARD 11)
 add_compile_options(-Wall -Wextra -Werror)
@@ -15,7 +15,7 @@ link_directories(${ALLEGRO_LIBRARY_DIRS})
 
 add_definitions(${ALLEGRO_CFLAGS_OTHER})
 
-add_executable(micro_rts
+add_executable(overdrive
         src/main.c
         src/keyboard.c src/keyboard.h
         src/gamestate.h src/gamestate.c
@@ -28,4 +28,4 @@ add_executable(micro_rts
         src/collider.h src/collider.c
         src/gamestate_forward.h src/health.c src/health.h src/building.c src/building.h src/bullet.c src/bullet.h src/enemy.c src/enemy.h src/laser_turret.c src/laser_turret.h src/health_bars.c src/health_bars.h src/tints.c src/tints.h src/colors.h src/game.c src/game.h)
 
-target_link_libraries(micro_rts ${ALLEGRO_LIBRARIES} m)
+target_link_libraries(overdrive ${ALLEGRO_LIBRARIES} m)
