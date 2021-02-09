@@ -470,7 +470,7 @@ void buy_units(GameState* gs) {
     if(gs->resources.keys[ALLEGRO_KEY_Q] & KEY_UNPROCESSED) {
         if(gs->resources.game.player_balance < UNIT_COST) return;
         Transform t = vec_Transform_get(gs->transform_components, gs->resources.game.player_base);
-        Vec2 spawn_point = vec2_add(t.position, vec2_make(gs->resources.config.level == 1 ? 350 : 100, 100));
+        Vec2 spawn_point = vec2_add(t.position, vec2_make(gs->resources.config.level == 1 ? 350 : 180, 0));
         spawn_point = vec2_add(spawn_point, random_offset2());
 
         gs->resources.game.player_balance -= UNIT_COST;
