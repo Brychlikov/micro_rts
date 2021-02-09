@@ -2,6 +2,9 @@
 // Created by brych on 15/01/2021.
 //
 
+// A number of useful constructs for dealing with coordinates. This module defines Vec2 type with algebraic functions
+// and a Rect type with simple overlapping check.
+
 #ifndef _RTS_COORD_UTILS_H
 #define _RTS_COORD_UTILS_H
 

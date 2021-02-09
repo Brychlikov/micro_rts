@@ -2,6 +2,8 @@
 // Created by brych on 20/01/2021.
 //
 
+// Sprite component. This module loads sprites and takes care of rendering them on entities having a Sprite component
+
 #ifndef _RTS_SPRITE_H
 #define _RTS_SPRITE_H
 

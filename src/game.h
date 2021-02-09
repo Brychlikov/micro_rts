@@ -2,6 +2,8 @@
 // Created by brych on 09/02/2021.
 //
 
+// Collection of miscellaneous systems connected to gameplay. Contains board initialization and income processing.
+
 #ifndef MICRO_RTS_GAME_H
 #define MICRO_RTS_GAME_H
 #include "gamestate_forward.h"

@@ -2,6 +2,9 @@
 // Created by brych on 15/01/2021.
 //
 
+// Engine. Defines a GameState type, a global state used by all systems. Contains functions for creating empty entities
+// and destroying them. All functionality - all components are later added by corresponding modules.
+
 #ifndef _RTS_GAMESTATE_H
 #define _RTS_GAMESTATE_H
 

@@ -2,6 +2,9 @@
 // Created by brych on 24/01/2021.
 //
 
+// Health system. Defines Health struct that keeps track of entities team and current health points and destroys it if
+// if they fall below zero.
+
 #ifndef _RTS_HEALTH_H
 #define _RTS_HEALTH_H
 

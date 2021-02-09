@@ -2,6 +2,8 @@
 // Created by brych on 16/01/2021.
 //
 
+// Defines a macro for generating vector implementations for arbitrary types used in many places
+
 #ifndef _RTS_VECTOR_H
 #define _RTS_VECTOR_H
 

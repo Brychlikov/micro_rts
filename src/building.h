@@ -2,6 +2,9 @@
 // Created by brych on 24/01/2021.
 //
 
+// Define buildings. There is no distinction between bases and auxiliary bases yet.
+// process_buildings check which buildings are currently under attack. This is later used in enemy AI
+
 #ifndef _RTS_BUILDING_H
 #define _RTS_BUILDING_H
 

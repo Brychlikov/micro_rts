@@ -2,6 +2,12 @@
 // Created by brych on 20/01/2021.
 //
 
+// Collision system. Every frame all entities having collider components are checked for collisions.
+// Collisions are stored in vector gs->resources.collisions.vec as linked lists containing all entities colliding with
+// the entity in the index.
+// There also is a layer system. Every layer can collide with any number of other layers, as described by the
+// gs->resources.collisions.masks array
+
 #ifndef _RTS_COLLIDER_H
 #define _RTS_COLLIDER_H
 

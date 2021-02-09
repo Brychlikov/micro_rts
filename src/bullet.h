@@ -2,6 +2,11 @@
 // Created by brych on 26/01/2021.
 //
 
+// Logic of bullets. Bullets are entities that move in a given direction at a constant speed.
+// If they collide with an entity having a HealthComponent from the opposing team,
+// bullet is destroyed and entity is damaged.
+// To limit the number of entities on the screen, bullets have limited lifetime.
+
 #ifndef _RTS_BULLET_H
 #define _RTS_BULLET_H
 

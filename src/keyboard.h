@@ -2,6 +2,9 @@
 // Created by brych on 14/01/2021.
 //
 
+// Module containing an event system updating key states in gs->resources.keys
+// Allows users to check if a key is processed for the first time and if it's still being held
+
 #ifndef _RTS_KEYBOARD_H
 #define _RTS_KEYBOARD_H
 

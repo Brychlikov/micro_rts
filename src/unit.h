@@ -2,6 +2,8 @@
 // Created by brych on 16/01/2021.
 //
 
+// Unit logic. Contains a state machine for unit behaviour and functions for anti-grouping, targeting and giving orders.
+
 
 #ifndef _RTS_UNIT_H
 #define _RTS_UNIT_H

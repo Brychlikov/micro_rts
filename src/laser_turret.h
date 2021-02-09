@@ -2,6 +2,8 @@
 // Created by brych on 31/01/2021.
 //
 
+// Logic of laser turrets.
+
 #ifndef _RTS_LASER_TURRET_H
 #define _RTS_LASER_TURRET_H
 

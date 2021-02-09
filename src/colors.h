@@ -2,6 +2,8 @@
 // Created by brych on 09/02/2021.
 //
 
+// Just some constant color codes for usage in different places
+
 #ifndef _RTS_COLORS_H
 #define _RTS_COLORS_H
 

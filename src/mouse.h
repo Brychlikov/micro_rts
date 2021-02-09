@@ -2,6 +2,9 @@
 // Created by brych on 16/01/2021.
 //
 
+// This module contains an event system updating mouse state in gs->resources.mouse
+// Mouse buttons are handled analogously to keyboard.h
+
 #ifndef _RTS_MOUSE_H
 #define _RTS_MOUSE_H
 

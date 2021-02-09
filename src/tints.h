@@ -2,6 +2,9 @@
 // Created by brych on 07/02/2021.
 //
 
+// This module changes the tint of sprites to distinguish enemy units from player units and overdriven units from those
+// without overdrives
+
 #ifndef _RTS_TINTS_H
 #define _RTS_TINTS_H
 #include "gamestate_forward.h"

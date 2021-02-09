@@ -2,6 +2,8 @@
 // Created by brych on 15/01/2021.
 //
 
+// Logic of selection UI. Draws a green rectangle and stores selected entities in gs->resources.selection.area
+
 #ifndef _RTS_SELECTION_UI_H
 #include <allegro5/allegro5.h>
 
