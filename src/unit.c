@@ -96,6 +96,7 @@ void init_units(GameState* gs) {
 }
 
 void deinit_units(GameState* gs) {
+    vec_int_destroy(units_selected);
     vec_UnitComponent_destroy(gs->unit_components);
     vec_int_destroy(gs->resources.overdrive.units);
 }

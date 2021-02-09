@@ -31,6 +31,7 @@ void misc_allegro_init(GameState* gs) {
     al_init();
     al_init_primitives_addon();
     al_init_image_addon();
+    al_init_font_addon();
     al_init_ttf_addon();
     al_hold_bitmap_drawing(true);
 
@@ -131,6 +132,11 @@ void process_entry(GameState* gs) {
         }
         else if(gs->resources.keys[ALLEGRO_KEY_3] & KEY_UNPROCESSED) {
             gs->resources.config.level = 3;
+            gs->resources.game_begun = true;
+            init_game(gs);
+        }
+        else if(gs->resources.keys[ALLEGRO_KEY_4] & KEY_UNPROCESSED) {
+            gs->resources.config.level = 4;
             gs->resources.game_begun = true;
             init_game(gs);
         }
@@ -344,7 +350,7 @@ int main()
     }
 
     for (unsigned int i = 0; i < FUNARR_LEN(deinit_fns); ++i) {
-        if(gs.resources.game_begun || i < 1)
+        if(i != 1 || gs.resources.game_begun)  // deinit_game is on index 1 and should be called only if game was inited
             deinit_fns[i](&gs);
     }
 
