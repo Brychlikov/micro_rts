@@ -33,7 +33,10 @@ void misc_allegro_init(GameState* gs) {
 
     gs->timer = al_create_timer(1.0 / 60.0);
     gs->queue = al_create_event_queue();
+    al_set_new_display_flags(ALLEGRO_FULLSCREEN_WINDOW);
     gs->display = al_create_display(1920, 1080);
+
+    al_set_window_title(gs->display, "micro_rts");
     gs->font = al_create_builtin_font();
 
     al_register_event_source(gs->queue, al_get_display_event_source(gs->display));
