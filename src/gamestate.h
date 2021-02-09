@@ -29,6 +29,7 @@ typedef struct GameState{
     ALLEGRO_EVENT_QUEUE* queue;
     ALLEGRO_DISPLAY* display;
     ALLEGRO_FONT* font;
+    ALLEGRO_FONT* big_font;
 
     bool redraw;
 

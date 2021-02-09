@@ -41,6 +41,7 @@ void misc_allegro_init(GameState* gs) {
     al_set_window_title(gs->display, "micro_rts");
 //    gs->font = al_create_builtin_font();
     gs->font = al_load_ttf_font("assets/font/ComicNeue-Regular.ttf", 25, 0);
+    gs->big_font = al_load_ttf_font("assets/font/ComicNeue-Regular.ttf", 60, 0);
     if(gs->font == NULL) {
         fprintf(stderr, "could not load font\n");
     }
@@ -142,14 +143,23 @@ void render_entry_ui(GameState* gs) {
         unsigned char r, g, b;
         al_unmap_rgb(color_code_to_allegro(BACKGROUND_COLOR), &r, &g, &b);
         al_draw_filled_rectangle(0, 0, screen_width, screen_height, al_map_rgba(r, g, b, 230));
+        al_draw_text(gs->big_font, color_code_to_allegro(FOREGROUND_COLOR),
+                     screen_width / 2, screen_height / 2 - 14 * 30 / 2 - 150, ALLEGRO_ALIGN_CENTRE, "OVERDRIVE");
         al_draw_multiline_text(
                 gs->font,
                 color_code_to_allegro(FOREGROUND_COLOR),
-                screen_width / 2 - 150, screen_height / 2,
-                300, 30,
+                screen_width / 2 - 300, screen_height / 2 - 14 * 30 / 2,
+                600, 30,
                 ALLEGRO_ALIGN_LEFT,
-                "Overdrive\n"
-                "Controls: TODO\n"
+                "Controls: \n\n"
+                "Buy a unit: Q\n"
+                "Pause: P\n"
+                "Exit game: Backspace\n\n"
+                "Make a selection with Left Mouse Button\n"
+                "Press Left Mouse Button on empty space to deselect\n\n"
+                "Give move command: Right Mouse Button\n"
+                "Give attack-move command: A\n"
+                "Toggle overdrive for selected units: E\n\n"
                 "Select level to begin:\n"
                 "Press 1, 2 or 3\n"
                 "1 - Easy (symmetric)\n"
