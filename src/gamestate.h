@@ -101,8 +101,6 @@ typedef struct GameState{
         } game;
     } resources;
 
-    // todo
-    // split sprites and resources from gamestate
     Vector_bool entities;  // true - alive false - dead
 
     // Component land

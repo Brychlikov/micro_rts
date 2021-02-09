@@ -197,7 +197,6 @@ void advance_units(GameState *gs) {
                 Vec2 diff = vec2_sub(unit->sm.move.dest, my_transform->position);
                 Vec2 delta;
                 float distance = gs->resources.time_delta * UNIT_SPEED * overdrive_multiplier;
-                //TODO make it adhere to time deltas
                 if(vec2_length(diff) <= distance) {
                     delta = vec2_sub(unit->sm.move.dest, my_transform->position);
                 }

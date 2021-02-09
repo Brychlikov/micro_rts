@@ -63,7 +63,6 @@ void selection_system(GameState* gs) {
             if(t.exists) rect = rect_local_to_global(rect, t);
 
 
-            // TODO check collision masks
             Collision collision_result = rect_collide(rect, gs->resources.selection.area);
 
             if(collision_result == COLLISION) {
