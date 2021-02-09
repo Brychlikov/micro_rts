@@ -62,8 +62,6 @@ void init_units(GameState* gs);
 
 void deinit_units(GameState* gs);
 
-void draw_units(GameState* gs);
-
 int create_unit(GameState* gs, Vec2 position, int team);
 
 void command_units(GameState* gs);

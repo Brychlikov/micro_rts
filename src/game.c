@@ -39,7 +39,6 @@ void init_game(GameState* gs) {
     float margin = 100;
     float usable_width = (float)al_get_display_width(gs->display) - 2 * margin;
     float usable_height = (float)al_get_display_height(gs->display) - 2 * margin;
-    printf("w: %f h: %f\n", usable_width, usable_height + 2 * margin + 2 * margin);
 
     for (int map_y = 0; map_y < height; ++map_y) {
         for (int map_x = 0; map_x < width; ++map_x) {

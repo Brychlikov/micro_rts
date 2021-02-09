@@ -214,19 +214,6 @@ void process_game_end(GameState* gs) {
     }
 }
 
-void print_collisions(GameState* gs) {
-    for (unsigned int i = 0; i < VEC_LEN(gs->resources.collisions.vec); ++i) {
-        CollisionData* cd = vec_CollisionData_get_ptr(gs->resources.collisions.vec, i);
-        if(cd->entity == -1) continue;
-        printf("Collisions of entity %d:\n", i);
-        while(cd != NULL && cd->entity != -1) {
-            printf("\tentity %d\n", cd->entity);
-            cd = cd->next;
-        }
-        printf("\n");
-    }
-}
-
 PURE_SYSTEM init_fns[] = {
         misc_allegro_init,
 

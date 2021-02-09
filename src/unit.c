@@ -10,15 +10,12 @@
 #include "keyboard.h"
 
 #define UNIT_SPEED 50
-#define UNIT_OVERDRIVE_SPEED 150
-#define UNIT_OVERDRIVE_ROTATION_SPEED 4
 
 #define UNIT_DAMAGE 10
 #define UNIT_OVERDRIVE_MULTIPLIER 3.0f
 #define UNIT_SHOT_COOLDOWN 1.0
 #define PI 3.14159265
 #define GROUPING_ITERATIONS 10
-#define GROUPING_STEP 5
 #define REPEL_MULTIPLIER 50000.0
 #define ATTRACT_MULTIPLIER 50.0
 
@@ -102,24 +99,6 @@ void deinit_units(GameState* gs) {
     vec_UnitComponent_destroy(gs->unit_components);
     vec_int_destroy(gs->resources.overdrive.units);
 }
-
-//void draw_units(GameState *gs) {
-//    for (int i = 0; i < gs->unit_entries.inner->length; ++i) {
-//        struct UnitEntry u_e = vec_UnitEntry_get(gs->unit_entries, i);
-//        if(u_e.exists) {
-//            al_draw_bitmap(unit_sprite, u_e.unit.position.x, u_e.unit.position.y, 0);
-//        }
-//    }
-//
-//    //draw over selected units with tinted bitmap
-//    for (int i = 0; i < gs->units_selected_indices.inner->length; ++i) {
-//        int index = vec_int_get(gs->units_selected_indices, i);
-//        struct UnitEntry u_e = vec_UnitEntry_get(gs->unit_entries, index);
-//        if(u_e.exists) {
-//            al_draw_tinted_bitmap(unit_sprite, al_map_rgb(0, 100, 0), u_e.unit.position.x, u_e.unit.position.y, 0);
-//        }
-//    }
-//}
 
 int target_unit(GameState *gs, int targeting, Vector_int targetables, float max_range) {
     // targetables - vector of entities having Health and Transform components
@@ -403,7 +382,6 @@ void process_overdrive(GameState *gs) {
     if(gs->resources.keys[ALLEGRO_KEY_E] & KEY_UNPROCESSED) {
 
         bool all_overdriven = true;
-        printf("in overdrive\n");
         for (unsigned int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
             int entity = vec_int_get(gs->resources.selection.entities_selected, i);
             UnitComponent* uc = vec_UnitComponent_get_ptr(gs->unit_components, entity);
@@ -413,7 +391,6 @@ void process_overdrive(GameState *gs) {
                 all_overdriven = false;
             }
         }
-        printf("all_overdriven: %d\n", all_overdriven);
 
         if(all_overdriven) { // disable overdrives
             for (unsigned int i = 0; i < VEC_LEN(gs->resources.selection.entities_selected); ++i) {
@@ -471,7 +448,6 @@ void buy_units(GameState* gs) {
         spawn_point = vec2_add(spawn_point, random_offset2());
 
         gs->resources.game.player_balance -= UNIT_COST;
-        printf("player balance: %f\n", gs->resources.game.player_balance);
         create_unit(gs, spawn_point, PLAYER_TEAM);
     }
 }
