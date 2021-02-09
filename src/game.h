@@ -3,6 +3,8 @@
 //
 
 // Collection of miscellaneous systems connected to gameplay. Contains board initialization and income processing.
+// Levels are read from assets/map*.txt files containing a multiplier of enemy economy and ascii representation
+// of the board
 
 #ifndef MICRO_RTS_GAME_H
 #define MICRO_RTS_GAME_H
