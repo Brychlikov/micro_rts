@@ -78,7 +78,8 @@ void process_enemy(GameState* gs) {
     if(building_to_help != -1) {  // building needs help
         Vec2 building_position = vec_Transform_get(gs->transform_components, building_to_help).position;
         Vec2 rally_point = vec2_add(building_position, vec2_make(-150, 0));
-        a_move_units(gs, idle_units, rally_point);
+        if(VEC_LEN(idle_units) > 0)
+            a_move_units(gs, idle_units, rally_point);
     }
 
     if(VEC_LEN(idle_units) >= SIEGE_CAP && building_to_help == -1){

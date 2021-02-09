@@ -6,6 +6,7 @@
 #include "gamestate.h"
 #include "sprite.h"
 #include "health.h"
+#include "colors.h"
 
 ALLEGRO_COLOR selected_tint;
 ALLEGRO_COLOR enemy_tint;
@@ -25,10 +26,10 @@ ALLEGRO_COLOR color_code_to_allegro(const char *s) {
 }
 
 void init_tints(GameState* gs) {
-    selected_tint = al_map_rgba_f(0.3, 0.8, 0.3, 1);
-    enemy_tint = al_map_rgba_f(1, 0.5, 0.5, 1);
-    overdrive_tint = color_code_to_allegro("5A853B");
-    selected_overdrive_tint = al_map_rgba_f(0.7, 1, 0.3, 1);
+    selected_tint = color_code_to_allegro(SELECTED_COLOR);
+    enemy_tint = color_code_to_allegro(ENEMY_COLOR);
+    overdrive_tint = color_code_to_allegro(OVERDRIVE_COLOR);
+    selected_overdrive_tint = color_code_to_allegro(SELECTED_OVERDRIVE_COLOR);
 }
 
 void tint_sprites(GameState *gs) {
@@ -36,11 +37,12 @@ void tint_sprites(GameState *gs) {
         Sprite* s = vec_Sprite_get_ptr(gs->sprite_components, entity);
         if(!s->exists) continue;
         Health h = vec_Health_get(gs->health_components, entity);
+        BulletComponent bc = vec_BulletComponent_get(gs->bullet_components, entity);
         UnitComponent uc = vec_UnitComponent_get(gs->unit_components, entity);
 
         s->tint = pure_tint;
 
-        if(h.exists && h.team == ENEMY_TEAM) {
+        if(h.exists && h.team == ENEMY_TEAM || bc.exists && bc.team == ENEMY_TEAM) {
             s->tint = enemy_tint;
         }
 

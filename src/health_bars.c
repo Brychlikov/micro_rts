@@ -8,6 +8,8 @@
 #include "coord_utils.h"
 #include "vector.h"
 #include "allegro5/allegro_primitives.h"
+#include "tints.h"
+#include "colors.h"
 
 void draw_healthbars(GameState *gs) {
     for (int entity = 0; entity < VEC_LEN(gs->entities); ++entity) {
@@ -21,8 +23,8 @@ void draw_healthbars(GameState *gs) {
             float filled = bar_width * (float)h.points / (float)h.max_points;
             float x = t.position.x - 50 * t.scale;
             float y = t.position.y + 50 * t.scale  ;
-            al_draw_filled_rectangle(x, y, x + bar_width, y + bar_height, al_map_rgb(255, 0, 0));
-            al_draw_filled_rectangle(x, y, x + filled, y + bar_height, al_map_rgb(0, 255, 0));
+            al_draw_filled_rectangle(x, y, x + bar_width, y + bar_height, color_code_to_allegro(HP_BAR_BACKGROUND));
+            al_draw_filled_rectangle(x, y, x + filled, y + bar_height, color_code_to_allegro(HP_BAR_FOREGROUND));
         }
     }
 }

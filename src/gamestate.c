@@ -4,6 +4,7 @@
 
 #include "gamestate.h"
 #include "building.h"
+#include "tints.h"
 
 #define PLAYER_BASE_INCOME 10
 
@@ -152,8 +153,8 @@ void process_income(GameState* gs) {
 void render_balance(GameState *gs) {
     int balance = (int)gs->resources.game.player_balance;
     float income = gs->resources.game.player_income;
-    al_draw_textf(gs->font, al_map_rgb_f(1, 1, 1), 25, 25, 0, "Balance: %d", balance);
-    al_draw_textf(gs->font, al_map_rgb_f(1, 1, 1), 25, 50, 0, "%+.1f", income);
+    al_draw_textf(gs->font, color_code_to_allegro("492C3F"), 25, 25, 0, "Balance: %d", balance);
+    al_draw_textf(gs->font, color_code_to_allegro("492C3F"), 25, 50, 0, "%+.1f", income);
 }
 
 int create_entity(GameState* gs) {

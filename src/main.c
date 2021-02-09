@@ -17,6 +17,7 @@
 #include "laser_turret.h"
 #include "enemy.h"
 #include "tints.h"
+#include "colors.h"
 
 #define FUNARR_LEN(arr) (sizeof(arr)/sizeof(size_t))
 
@@ -91,15 +92,17 @@ void prep_redraw(GameState* gs) {
     }
     gs->resources.last_frame_timestamp = now;
 //    al_clear_to_color(al_map_rgba(30, 30, 50, 255));
-    al_clear_to_color(color_code_to_allegro("2C1409"));
+    al_clear_to_color(color_code_to_allegro(BACKGROUND_COLOR));
 }
 
 void render_pause_ui(GameState* gs) {
     if(gs->resources.paused) {
         int screen_height = al_get_display_height(gs->display);
         int screen_width = al_get_display_width(gs->display);
-        al_draw_filled_rectangle(0, 0, screen_width, screen_height, al_map_rgba_f(0, 0, 0, 0.9));
-        al_draw_text(gs->font, al_map_rgb(255, 255, 255), screen_width / 2, screen_height / 2, ALLEGRO_ALIGN_CENTRE, "Game paused. Press P to unpause.");
+        unsigned char r, g, b;
+        al_unmap_rgb(color_code_to_allegro(BACKGROUND_COLOR), &r, &g, &b);
+        al_draw_filled_rectangle(0, 0, screen_width, screen_height, al_map_rgba(r, g, b, 230));
+        al_draw_text(gs->font, color_code_to_allegro(FOREGROUND_COLOR), screen_width / 2, screen_height / 2, ALLEGRO_ALIGN_CENTRE, "Game paused. Press P to unpause.");
     }
 }
 
@@ -127,10 +130,12 @@ void render_entry_ui(GameState* gs) {
     if(!gs->resources.game_begun) {
         int screen_height = al_get_display_height(gs->display);
         int screen_width = al_get_display_width(gs->display);
-        al_draw_filled_rectangle(0, 0, screen_width, screen_height, al_map_rgba_f(0, 0, 0, 0.9));
+        unsigned char r, g, b;
+        al_unmap_rgb(color_code_to_allegro(BACKGROUND_COLOR), &r, &g, &b);
+        al_draw_filled_rectangle(0, 0, screen_width, screen_height, al_map_rgba(r, g, b, 230));
         al_draw_multiline_text(
                 gs->font,
-                al_map_rgb(255, 255, 255),
+                color_code_to_allegro(FOREGROUND_COLOR),
                 screen_width / 2 - 150, screen_height / 2,
                 300, 20,
                 ALLEGRO_ALIGN_LEFT,
@@ -148,10 +153,12 @@ void render_end_ui(GameState* gs) {
     if(gs->resources.game_ended) {
         int screen_height = al_get_display_height(gs->display);
         int screen_width = al_get_display_width(gs->display);
-        al_draw_filled_rectangle(0, 0, screen_width, screen_height, al_map_rgba_f(0, 0, 0, 0.9));
+        unsigned char r, g, b;
+        al_unmap_rgb(color_code_to_allegro(BACKGROUND_COLOR), &r, &g, &b);
+        al_draw_filled_rectangle(0, 0, screen_width, screen_height, al_map_rgba(r, g, b, 230));
         al_draw_multiline_text(
                 gs->font,
-                al_map_rgb(255, 255, 255),
+                color_code_to_allegro(FOREGROUND_COLOR),
                 screen_width / 2 - 150, screen_height / 2,
                 300, 20,
                 ALLEGRO_ALIGN_LEFT,

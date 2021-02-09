@@ -3,6 +3,8 @@
 //
 
 #include "sprite.h"
+#include "tints.h"
+#include "colors.h"
 #include "gamestate.h"
 
 GENERATE_VECTOR_DEFINITION(Sprite)
@@ -10,7 +12,7 @@ GENERATE_VECTOR_DEFINITION(Sprite)
 ALLEGRO_COLOR pure_tint;
 
 void init_sprites(GameState* gs) {
-    pure_tint = al_map_rgba(202, 123, 37, 255);
+    pure_tint = color_code_to_allegro(PLAYER_COLOR);
 //    pure_tint = al_map_rgba(255, 255, 255, 255);
     gs->sprite_components = vec_Sprite_new();
     gs->resources.sprites.unit = al_load_bitmap("assets/unit.png");
