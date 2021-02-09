@@ -38,9 +38,9 @@ typedef struct UnitStateMachine {
             int target;
             UnitState next;
             Vec2 next_dest;
-            float shot_cooldown;
         } aggressive;
     };
+    float shot_cooldown;
 } UnitStateMachine;
 
 typedef struct UnitComponent {

@@ -79,11 +79,11 @@ void process_bullets(GameState* gs) {
             continue;
         }
 
-        // delete bullet if outside of playable zone
-        if(t->position.x < -100  || t->position.y < -100 || t->position.x > 2000 || t->position.y > 2000) {
-            destroy_entity(gs, i);
-            continue;
-        }
+//        // delete bullet if outside of playable zone
+//        if(t->position.x < -100  || t->position.y < -100 || t->position.x > 2000 || t->position.y > 2000) {
+//            destroy_entity(gs, i);
+//            continue;
+//        }
 
         CollisionData* cd = vec_CollisionData_get_ptr(gs->resources.collisions.vec, i);
         while(cd != NULL && cd->entity != -1) {
