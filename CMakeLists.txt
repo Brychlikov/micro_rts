@@ -7,7 +7,7 @@ find_package(PkgConfig REQUIRED)
 
 # add_compile_definitions(DEBUG_COLLIDERS)
 
-pkg_check_modules(ALLEGRO REQUIRED allegro-5 allegro_font-5 allegro_primitives-5 allegro_image-5)
+pkg_check_modules(ALLEGRO REQUIRED allegro-5 allegro_font-5 allegro_primitives-5 allegro_image-5 allegro_ttf-5)
 include_directories(${ALLEGRO_INCLUDE_DIRS})
 link_directories(${ALLEGRO_LIBRARY_DIRS})
 

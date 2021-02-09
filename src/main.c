@@ -2,6 +2,7 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
+#include <allegro5/allegro_ttf.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include "keyboard.h"
@@ -29,6 +30,7 @@ void misc_allegro_init(GameState* gs) {
     al_init();
     al_init_primitives_addon();
     al_init_image_addon();
+    al_init_ttf_addon();
     al_hold_bitmap_drawing(true);
 
     gs->timer = al_create_timer(1.0 / 60.0);
@@ -37,7 +39,11 @@ void misc_allegro_init(GameState* gs) {
     gs->display = al_create_display(1920, 1080);
 
     al_set_window_title(gs->display, "micro_rts");
-    gs->font = al_create_builtin_font();
+//    gs->font = al_create_builtin_font();
+    gs->font = al_load_ttf_font("assets/font/ComicNeue-Regular.ttf", 25, 0);
+    if(gs->font == NULL) {
+        fprintf(stderr, "could not load font\n");
+    }
 
     al_register_event_source(gs->queue, al_get_display_event_source(gs->display));
     al_register_event_source(gs->queue, al_get_timer_event_source(gs->timer));
@@ -140,7 +146,7 @@ void render_entry_ui(GameState* gs) {
                 gs->font,
                 color_code_to_allegro(FOREGROUND_COLOR),
                 screen_width / 2 - 150, screen_height / 2,
-                300, 20,
+                300, 30,
                 ALLEGRO_ALIGN_LEFT,
                 "Overdrive\n"
                 "Controls: TODO\n"
