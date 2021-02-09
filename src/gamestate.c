@@ -6,7 +6,6 @@
 #include "building.h"
 
 #define PLAYER_BASE_INCOME 10
-#define ENEMY_INCOME_MULTIPLIER 2.0
 
 #define INCOME_PER_BASE 5
 #define AUX_BASE_HP 200
@@ -31,14 +30,24 @@ void init_game(GameState* gs) {
     gs->resources.game.player_auxiliary_bases = vec_int_new();
     gs->resources.game.enemy_auxiliary_bases = vec_int_new();
 
+    char fname[128];
+    sprintf(fname, "assets/map%d.txt", gs->resources.config.level);
+    printf("Loading map from %s\n", fname);
 
-    FILE* map = fopen("assets/map.txt", "r");
+    FILE* map = fopen(fname, "r");
     if(map == NULL) {
         fprintf(stderr, "Could not read map file. Is the ./assets folder accessible?\n");
         exit(1);
     }
     int width, height;
-    fscanf(map, "%d %d", &width, &height);
+    float multiplier;
+    if(fscanf(map, "%d %d %f", &width, &height, &multiplier) != 3)  {
+        fprintf(stderr, "Malformed map file. Are the 3 config values in the first line?\n");
+        exit(1);
+    }
+
+    gs->resources.config.enemy_multiplier = multiplier;
+
     float marigin = 100;
     float usable_width = (float)al_get_display_width(gs->display) - 2 * marigin;
     float usable_height = (float)al_get_display_height(gs->display) - 2 * marigin;
@@ -75,18 +84,24 @@ void init_game(GameState* gs) {
                     ;
                     create_laser_turret(gs, vec2_make(x, y), ENEMY_TEAM);
                     break;
-                default:
+                case '+':  // player laser turret
+                    ;
+                    create_laser_turret(gs, vec2_make(x, y), PLAYER_TEAM);
                     break;
+                case '.':
+                    break;
+                default:
+                    fprintf(stderr, "WARNING: Unknown character in map\n");
             }
         }
     }
 
 
     gs->resources.game.player_income = PLAYER_BASE_INCOME;
-    gs->resources.game.enemy_income = PLAYER_BASE_INCOME * ENEMY_INCOME_MULTIPLIER;
+    gs->resources.game.enemy_income = PLAYER_BASE_INCOME * gs->resources.config.enemy_multiplier;
 
-    gs->resources.game.player_balance = 0;
-    gs->resources.game.enemy_balance = 0;
+    gs->resources.game.player_balance = 600;
+    gs->resources.game.enemy_balance = 600;
 
 }
 
@@ -96,6 +111,7 @@ void deinit_game(GameState *gs) {
 }
 
 void update_income_values(GameState *gs) {
+    if(!gs->resources.game_begun) return;
     float player_income = PLAYER_BASE_INCOME;
     for (int i = 0; i < VEC_LEN(gs->resources.game.player_auxiliary_bases); ++i) {
         int entity = vec_int_get(gs->resources.game.player_auxiliary_bases, i);
@@ -122,7 +138,7 @@ void update_income_values(GameState *gs) {
             enemy_income += INCOME_PER_BASE;
         }
     }
-    enemy_income *= ENEMY_INCOME_MULTIPLIER;
+    enemy_income *= gs->resources.config.enemy_multiplier;
 
     gs->resources.game.player_income = player_income;
     gs->resources.game.enemy_income = enemy_income;

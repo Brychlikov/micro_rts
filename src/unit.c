@@ -96,17 +96,6 @@ void init_units(GameState* gs) {
     units_selected = vec_int_with_capacity(64);
 
     gs->resources.overdrive.units = vec_int_new();
-
-    // ECS land below
-    create_unit(gs, vec2_make(100, 100), 0);
-    create_unit(gs, vec2_make(200, 100), 0);
-    create_unit(gs, vec2_make(300, 100), 0);
-    create_unit(gs, vec2_make(100, 200), 0);
-    create_unit(gs, vec2_make(200, 200), 0);
-    create_unit(gs, vec2_make(300, 200), 0);
-    create_unit(gs, vec2_make(100, 300), 0);
-    create_unit(gs, vec2_make(200, 300), 0);
-    create_unit(gs, vec2_make(300, 300), 0);
 }
 
 void deinit_units(GameState* gs) {

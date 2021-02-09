@@ -48,6 +48,11 @@ typedef struct GameState{
         struct timespec last_frame_timestamp;
 
         struct {
+            int level;
+            float enemy_multiplier;
+        } config;
+
+        struct {
             bool in_progress;
             Rect area;
             Vector_int entities_selected;

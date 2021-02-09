@@ -78,10 +78,6 @@ void prep_redraw(GameState* gs) {
         gs->resources.paused = !gs->resources.paused;
     }
 
-    if(gs->resources.keys[ALLEGRO_KEY_SPACE] & KEY_UNPROCESSED) {
-        gs->resources.game_begun = true;
-    }
-
     if(gs->resources.last_frame_timestamp.tv_sec == 0) {  // first frame of the game
         gs->resources.time_delta = 1.0/60;
     }
@@ -107,6 +103,26 @@ void render_pause_ui(GameState* gs) {
     }
 }
 
+void process_entry(GameState* gs) {
+    if(!gs->resources.game_begun) {
+        if(gs->resources.keys[ALLEGRO_KEY_1] & KEY_UNPROCESSED) {
+            gs->resources.config.level = 1;
+            gs->resources.game_begun = true;
+            init_game(gs);
+        }
+        else if(gs->resources.keys[ALLEGRO_KEY_2] & KEY_UNPROCESSED) {
+            gs->resources.config.level = 2;
+            gs->resources.game_begun = true;
+            init_game(gs);
+        }
+        else if(gs->resources.keys[ALLEGRO_KEY_3] & KEY_UNPROCESSED) {
+            gs->resources.config.level = 3;
+            gs->resources.game_begun = true;
+            init_game(gs);
+        }
+    }
+}
+
 void render_entry_ui(GameState* gs) {
     if(!gs->resources.game_begun) {
         int screen_height = al_get_display_height(gs->display);
@@ -118,7 +134,13 @@ void render_entry_ui(GameState* gs) {
                 screen_width / 2 - 150, screen_height / 2,
                 300, 20,
                 ALLEGRO_ALIGN_LEFT,
-                "Overdrive\nControls: TODO\n\nPress SPACE to begin");
+                "Overdrive\n"
+                "Controls: TODO\n"
+                "Select level to begin:\n"
+                "Press 1, 2 or 3\n"
+                "1 - Easy (symmetric)\n"
+                "2 - Medium (asymmetric)\n"
+                "3 - Hard (asymmetric)\n");
     }
 }
 
@@ -184,7 +206,6 @@ PURE_SYSTEM init_fns[] = {
         init_units,
         init_enemy,
         init_tints,
-        init_game,
 };
 
 EVENT_SYSTEM event_fns[] = {
@@ -196,6 +217,8 @@ EVENT_SYSTEM event_fns[] = {
 
 PURE_SYSTEM redraw_fns[] = {
         prep_redraw,
+        process_entry,
+        render_entry_ui,  // these three should always be the firsts
         selection_system,
         draw_selection_area,
         check_collisions,
@@ -220,7 +243,6 @@ PURE_SYSTEM redraw_fns[] = {
         command_units,
         process_income,
         process_game_end,
-        render_entry_ui,
         render_pause_ui,
         render_balance,
         render_end_ui,
@@ -274,7 +296,8 @@ int main()
         {
 
             for (int i = 0; i < FUNARR_LEN(redraw_fns); ++i) {
-                redraw_fns[i](&gs);
+                if(i < 3 || gs.resources.game_begun)  // only the first three functions are safe to call before game init
+                    redraw_fns[i](&gs);
             }
 
 
