@@ -98,7 +98,7 @@ void prep_redraw(GameState* gs) {
             gs->resources.time_delta = 0;
         }
         else {
-            gs->resources.time_delta = (float)usecs_elapsed / 1000000 * 2.5;
+            gs->resources.time_delta = (float)usecs_elapsed / 1000000;
         }
     }
     gs->resources.last_frame_timestamp = now;
@@ -162,10 +162,11 @@ void render_entry_ui(GameState* gs) {
                 "Give attack-move command: A\n"
                 "Toggle overdrive for selected units: E\n\n"
                 "Select level to begin:\n"
-                "Press 1, 2 or 3\n"
-                "1 - Easy (symmetric)\n"
-                "2 - Medium (asymmetric)\n"
-                "3 - Hard (asymmetric)\n");
+                "Press 1, 2, 3 or 4\n"
+                "1 - Very Easy (asymmetric, but in your favor :) )\n"
+                "2 - Easy (symmetric)\n"
+                "3 - Medium (asymmetric)\n"
+                "4 - Hard (asymmetric)\n");
     }
 }
 
