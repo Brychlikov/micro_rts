@@ -343,7 +343,8 @@ int main()
     }
 
     for (unsigned int i = 0; i < FUNARR_LEN(deinit_fns); ++i) {
-        deinit_fns[i](&gs);
+        if(gs.resources.game_begun || i < 1)
+            deinit_fns[i](&gs);
     }
 
     return 0;
