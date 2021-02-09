@@ -97,7 +97,7 @@ void prep_redraw(GameState* gs) {
             gs->resources.time_delta = 0;
         }
         else {
-            gs->resources.time_delta = (float)usecs_elapsed / 1000000;
+            gs->resources.time_delta = (float)usecs_elapsed / 1000000 * 2.5;
         }
     }
     gs->resources.last_frame_timestamp = now;
@@ -176,15 +176,22 @@ void render_end_ui(GameState* gs) {
         al_unmap_rgb(color_code_to_allegro(BACKGROUND_COLOR), &r, &g, &b);
         al_draw_filled_rectangle(0, 0, screen_width, screen_height, al_map_rgba(r, g, b, 230));
         al_draw_multiline_text(
-                gs->font,
+                gs->big_font,
                 color_code_to_allegro(FOREGROUND_COLOR),
-                screen_width / 2 - 150, screen_height / 2,
+                screen_width / 2 , screen_height / 2 - 20,
                 300, 20,
-                ALLEGRO_ALIGN_LEFT,
+                ALLEGRO_ALIGN_CENTRE,
                 gs->resources.victory ? "Victory!" : "Defeat.");
+        al_draw_text(gs->font,
+                     color_code_to_allegro(FOREGROUND_COLOR),
+                     screen_width / 2 , screen_height / 2 + 200,
+                     ALLEGRO_ALIGN_CENTRE,
+                     "Press R to restart");
     }
 
 }
+
+void reset_game(GameState* gs);
 
 void process_game_end(GameState* gs) {
     if(!gs->resources.game_ended) {
@@ -199,6 +206,9 @@ void process_game_end(GameState* gs) {
             gs->resources.game_ended = true;
             gs->resources.victory = false;
         }
+    }
+    if(gs->resources.game_ended && gs->resources.keys[ALLEGRO_KEY_R]) {
+        reset_game(gs);
     }
 }
 
@@ -292,6 +302,17 @@ PURE_SYSTEM deinit_fns[] = {
         deinit_components,
 };
 
+void reset_game(GameState* gs) {
+    // run all deinits, exccept of allegro
+    for (int i = 1; i < FUNARR_LEN(deinit_fns); ++i) {
+        deinit_fns[i](gs);
+    }
+    gs->resources.game_begun = false;
+    gs->resources.game_ended = false;
+    for (int i = 3; i < FUNARR_LEN(init_fns); ++i) {
+        init_fns[i](gs);
+    }
+}
 
 
 int main()
