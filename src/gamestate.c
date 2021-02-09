@@ -49,15 +49,15 @@ void init_game(GameState* gs) {
 
     gs->resources.config.enemy_multiplier = multiplier;
 
-    float marigin = 100;
-    float usable_width = (float)al_get_display_width(gs->display) - 2 * marigin;
-    float usable_height = (float)al_get_display_height(gs->display) - 2 * marigin;
-    printf("w: %f h: %f\n", usable_width, usable_height + 2 * marigin + 2*marigin);
+    float margin = 100;
+    float usable_width = (float)al_get_display_width(gs->display) - 2 * margin;
+    float usable_height = (float)al_get_display_height(gs->display) - 2 * margin;
+    printf("w: %f h: %f\n", usable_width, usable_height + 2 * margin + 2 * margin);
 
     for (int map_y = 0; map_y < height; ++map_y) {
         for (int map_x = 0; map_x < width; ++map_x) {
-            float x = marigin + (float)map_x / (float)width * usable_width;
-            float y = marigin + (float)map_y / (float)height * usable_height;
+            float x = margin + (float)map_x / (float)width * usable_width;
+            float y = margin + (float)map_y / (float)height * usable_height;
             char c;
             fscanf(map, " %c", &c);
 
